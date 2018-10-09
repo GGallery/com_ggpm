@@ -12,10 +12,10 @@
 	<!--  The version string is recorded in the components table -->
 	<version>1.0.00</version>
 	<!-- The description is optional and defaults to the name -->
-	<description>GGLMS component</description>
+	<description>GGPM component</description>
 
 	<updateservers>
-		<server type="extension" element="com_gglms" name="gglms" priority="1">https://raw.githubusercontent.com/GGallery/com_ggpm/master/ggpmupdate.xml</server>
+		<server type="extension" element="com_ggpm" name="ggpm" priority="1">https://raw.githubusercontent.com/GGallery/com_ggpm/master/ggpmupdate.xml</server>
 	</updateservers>
 
 	<install>
