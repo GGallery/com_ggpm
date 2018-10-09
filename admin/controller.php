@@ -34,6 +34,6 @@ class gglmsController extends JControllerLegacy {
         parent::display($cachable);
     }
 
-  
+
 
 }

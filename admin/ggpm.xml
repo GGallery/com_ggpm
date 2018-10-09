@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component"  method="upgrade">
 
-	<name>GGLMS</name>
+	<name>GGPM</name>
 	<!-- The following elements are optional and free of formatting constraints -->
 	<creationDate>Giugno 2017</creationDate>
 	<author>Antonio Giangravè</author>
@@ -10,12 +10,12 @@
 	<copyright>Copyright Info</copyright>
 	<license>License Info</license>
 	<!--  The version string is recorded in the components table -->
-	<version>3.8.41</version>
+	<version>1.0.00</version>
 	<!-- The description is optional and defaults to the name -->
 	<description>GGLMS component</description>
 
 	<updateservers>
-		<server type="extension" element="com_gglms" name="gglms" priority="1">https://raw.githubusercontent.com/GGallery/com_ggpm/master/gglmsupdate.xml</server>
+		<server type="extension" element="com_gglms" name="gglms" priority="1">https://raw.githubusercontent.com/GGallery/com_ggpm/master/ggpmupdate.xml</server>
 	</updateservers>
 
 	<install>
@@ -46,7 +46,7 @@
 	</files>
 
 	<administration>
-		<menu link='index.php?option=com_gglms'>GGlms!</menu>
+		<menu link='index.php?option=com_gglms'>GGPM</menu>
 
 		<files folder="admin">
 			<filename>index.html</filename>
@@ -54,9 +54,7 @@
 			<filename>controller.php</filename>
 
 			<folder>controllers</folder>
-			<folder>helpers</folder>
-			<folder>images</folder>
-			<folder>jupload</folder>
+		
 			<folder>language</folder>
 			<folder>models</folder>
 			<folder>tables</folder>
