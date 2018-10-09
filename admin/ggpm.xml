@@ -37,7 +37,7 @@
 		<filename>controller.php</filename>
 
 		<folder>controllers</folder>
-		<folder>helpers</folder>
+		
 		<folder>language</folder>
 		<folder>libraries</folder>
 		<folder>models</folder>
@@ -46,7 +46,7 @@
 	</files>
 
 	<administration>
-		<menu link='index.php?option=com_gglms'>GGPM</menu>
+		<menu link='index.php?option=com_ggpm'>GGPM</menu>
 
 		<files folder="admin">
 			<filename>index.html</filename>

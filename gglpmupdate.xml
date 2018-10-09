@@ -6,8 +6,8 @@
 		<element>com_ggpm</element>
 		<type>component</type>
 		<folder></folder>
-		<version>3.8.45</version>
-		<infourl title="GGLMS  - github">https://github.com/GGallery/com_ggpm</infourl>
+		<version>1.0.00</version>
+		<infourl title="GGPM  - github">https://github.com/GGallery/com_ggpm</infourl>
 		<downloads>
 			<downloadurl type="full" format="zip">https://github.com/GGallery/com_ggpm/archive/master.zip</downloadurl>
 		</downloads>
