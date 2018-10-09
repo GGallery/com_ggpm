@@ -46,7 +46,7 @@
 	</files>
 
 	<administration>
-		<menu link='index.php?option=com_gglms'>GGPM</menu>
+		<menu link='index.php?option=com_ggpm'>GGPM</menu>
 
 		<files folder="admin">
 			<filename>index.html</filename>
