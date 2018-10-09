@@ -6,7 +6,7 @@ defined('_JEXEC') or die;
  * @package WebTV
  * Router.php
  */
-class GGlmsRouter extends JComponentRouterBase
+class GGpmRouter extends JComponentRouterBase
 {
 
     function build(&$query) {

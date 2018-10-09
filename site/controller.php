@@ -14,7 +14,7 @@ jimport('joomla.application.component.controller');
 jimport('joomla.access.access');
 
 
-class gglmsController extends JControllerLegacy {
+class ggpmController extends JControllerLegacy {
 
     private $_user;
     private $_japp;

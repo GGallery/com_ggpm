@@ -15,7 +15,7 @@ require_once 'models/libs/debugg/debugg.php';
 //require_once JPATH_COMPONENT.DS.'models'.DS.'libs'.DS.'debugg'.DS.'debugg.php';
 jimport('joomla.application.component.controller');
 
-class gglmsController extends JControllerLegacy {
+class ggpmController extends JControllerLegacy {
 
     public function __construct($config = array()) {
         parent::__construct($config);
