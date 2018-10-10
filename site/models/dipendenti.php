@@ -35,6 +35,16 @@ class ggpmModelDipendenti  extends JModelLegacy {
         return $result;
     }
 
+    public function delete($id){
+
+
+        $sql="delete from u3ukon_gg_dipendenti where id=".$id;
+        $this->_db->setQuery($sql);
+        $result=$this->_db->execute();
+        var_dump($result);
+        return $result;
+    }
+
     public function getDipendenti(){
 
         $query=$this->_db->getQuery(true);

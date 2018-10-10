@@ -27,6 +27,7 @@ class ggpmControllerDipendenti extends JControllerLegacy
         parent::__construct($config);
         $this->_app = JFactory::getApplication();
         $this->_filterparam = new stdClass();
+        $this->_filterparam->id=JRequest::getVar('id');
         $this->_filterparam->nome=JRequest::getVar('nome');
         $this->_filterparam->cognome=JRequest::getVar('cognome');
         $this->_filterparam->valore_orario=JRequest::getVar('valore_orario');
@@ -37,6 +38,18 @@ class ggpmControllerDipendenti extends JControllerLegacy
 
         $model=new ggpmModelDipendenti();
         if($model->insert($this->_filterparam->nome,$this->_filterparam->cognome,$this->_filterparam->valore_orario)) {
+            echo "1";
+        }else{
+            echo "0";
+        }
+        $this->_app->close();
+
+    }
+
+    public function delete(){
+
+        $model=new ggpmModelDipendenti();
+        if($model->delete($this->_filterparam->id)) {
             echo "1";
         }else{
             echo "0";

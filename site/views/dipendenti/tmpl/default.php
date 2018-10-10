@@ -35,6 +35,10 @@ defined('_JEXEC') or die;
         color:red;
     }
 
+    .start_hidden_input,.confirm_button{
+
+        display: none;
+    }
 
 
 </style>
@@ -58,10 +62,16 @@ defined('_JEXEC') or die;
         <?php  foreach ($this->dipendenti as $dipendente) {
                 ?>
                 <tr>
-                    <td class="cognome"><?php echo $dipendente['cognome']; ?></td>
-                    <td class="nome"><?php echo $dipendente['nome']; ?></td>
-                    <td class="valore_orario"><?php echo $dipendente['valore_orario']; ?></td>
-                    <td class="bottoni"><a href="" onmouseover="" onclick="modifyclick()"><span class="oi oi-pencil" title="icon name" aria-hidden="true"></span></a><span class="oi oi-delete red" title="icon name" aria-hidden="true" onclick="delclick()"></span></td>
+                    <td class="cognome"><span class="start_span" id="span_cognome_<?php echo $dipendente['id']; ?>"><?php echo $dipendente['cognome']; ?></span>
+                        <input id="input_cognome_<?php echo $dipendente['id']; ?>" class="start_hidden_input form-control form-control-sm" type="text" value="<?php echo $dipendente['cognome']; ?>"></td>
+                    <td class="nome"><span class="start_span" id="span_nome_<?php echo $dipendente['id']; ?>"><?php echo $dipendente['nome']; ?></span>
+                        <input id="input_nome_<?php echo $dipendente['id']; ?>" class="start_hidden_input form-control form-control-sm" type="text" value="<?php echo $dipendente['nome']; ?>"></td>
+                    <td class="valore_orario"><span class="start_span" id="span_valore_orario_<?php echo $dipendente['id']; ?>"><?php echo $dipendente['valore_orario']; ?></span>
+                        <input id="input_valore_orario_<?php echo $dipendente['id']; ?>" class="start_hidden_input form-control form-control-sm" type="text" value="<?php echo $dipendente['valore_orario']; ?>"></td>
+                    <td class="bottoni">
+                        <button><span class="modify_button oi oi-pencil" title="icon name" aria-hidden="true" id="<?php echo $dipendente['id']; ?>"></span></button>
+                        <button class="confirm_button" id="confirm_button_<?php echo $dipendente['id']; ?>"><span class="oi oi-thumb-up" title="icon name" aria-hidden="true" id="confirm_span_<?php echo $dipendente['id']; ?>"></span></button>
+                        <button onclick="deleteclick(<?php echo $dipendente['id']; ?>)"><span class="oi oi-delete red" title="icon name" aria-hidden="true"></span></button></td>
                 </tr>
                 <?php
             }
@@ -74,9 +84,9 @@ defined('_JEXEC') or die;
 
     <div  class="row insertbox">
 
-        <div class="col-xs-4 col-md-4 text-info"><h3>nome:</h3> <input class="form-control form-control-sm" type="text" id="nome"></div>
-        <div class="col-xs-4 col-md-4 text-info"><h3>cognome:</h3> <input class="form-control form-control-sm" type="text" id="cognome"></div>
-        <div class="col-xs-4 col-md-2 text-info"><h3>valore orario:</h3> <input class="form-control form-control-sm" type="text" id="valore_orario"></div>
+        <div class="col-xs-4 col-md-4 text-info"><h5>nome:</h5> <input class="form-control form-control-sm" type="text" id="nome"></div>
+        <div class="col-xs-4 col-md-4 text-info"><h5>cognome:</h5> <input class="form-control form-control-sm" type="text" id="cognome"></div>
+        <div class="col-xs-4 col-md-2 text-info"><h5>valore orario:</h5> <input class="form-control form-control-sm" type="text" id="valore_orario"></div>
     </div>
 
     <div  class="row insertbox">
@@ -85,6 +95,7 @@ defined('_JEXEC') or die;
         </div><div class="col-xs-0 col-md-4"></div>
     </div>
 </div>
+
 <script type="text/javascript">
     function insertclick(){
 
@@ -103,9 +114,44 @@ defined('_JEXEC') or die;
         });
     }
 
-    function modifyclick() {
-        alert ('ciao!');
-    }
+    jQuery(".modify_button").click(function (event) {
 
+        jQuery('.start_hidden_input').hide()
+        jQuery('.start_span').show()
+        var str=jQuery(event.target).attr('id').toString();
+        jQuery("#input_cognome_"+str).toggle();
+        jQuery("#input_nome_"+str).toggle();
+        jQuery("#input_valore_orario_"+str).toggle();
+        jQuery("#confirm_button_"+str).toggle();
+        jQuery("#span_cognome_"+str).toggle();
+        jQuery("#span_nome_"+str).toggle();
+        jQuery("#span_valore_orario_"+str).toggle();
+    });
+
+    jQuery(".oi-thumb-up").click(function (event) {
+
+
+        var str=jQuery(event.target).attr('id').toString();
+        console.log(str);
+    });
+
+
+    function deleteclick(id) {
+
+        if(confirm('attenzione, stai cancellando un utente')==true) {
+            jQuery.ajax({
+                method: "POST",
+                cache: false,
+                url: 'index.php?option=com_ggpm&task=dipendenti.delete&id=' + id.toString()
+
+            }).done(function () {
+
+                alert("cancellazione riuscita");
+                location.reload();
+
+
+            });
+        }
+    }
 </script>
 </html>
