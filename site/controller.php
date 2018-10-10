@@ -3,12 +3,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-require_once 'administrator/components/com_gglms/models/libs/debugg/debugg.php';
-require_once JPATH_COMPONENT . '/helpers/output.php';
-require_once JPATH_COMPONENT . '/helpers/utility.php';
-require_once JPATH_COMPONENT . '/models/contenuto.php';
-require_once JPATH_COMPONENT . '/models/unita.php';
-require_once JPATH_COMPONENT . '/models/users.php';
+
+
 
 jimport('joomla.application.component.controller');
 jimport('joomla.access.access');
@@ -30,8 +26,8 @@ class ggpmController extends JControllerLegacy {
         JHtml::_('jquery.framework');
 
 
-        JHtml::script(Juri::base() . 'components/com_gglms/libraries/js/mediaelement-and-player.js');
-        JHtml::script(Juri::base() . 'components/com_gglms/libraries/js/bootstrap.min.js');
+        JHtml::script(Juri::base() . 'components/com_ggpm/libraries/js/mediaelement-and-player.js');
+        JHtml::script(Juri::base() . 'components/com_ggpm/libraries/js/bootstrap.min.js');
 
     }
 
