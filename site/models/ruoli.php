@@ -28,14 +28,24 @@ class ggpmModelRuoli  extends JModelLegacy {
         $object = new StdClass;
         $object->ruolo=$ruolo;
         $object->timestamp=Date('Y-m-d h:i:s',time());
-        $result=$this->_db->insertObject('u3ukon_gg_ruoli',$object);
+        $result=$this->_db->insertObject('u3kon_gg_ruoli',$object);
         return $result;
     }
 
     public function delete($id){
 
 
-        $sql="delete from u3ukon_gg_ruoli where id=".$id;
+        $sql="delete from u3kon_gg_ruoli where id=".$id;
+        $this->_db->setQuery($sql);
+        $result=$this->_db->execute();
+
+        return $result;
+    }
+
+    public function delete_map($id){
+
+
+        $sql="delete from u3kon_gg_map_dip_ruolo where id=".$id;
         $this->_db->setQuery($sql);
         $result=$this->_db->execute();
 
@@ -45,7 +55,7 @@ class ggpmModelRuoli  extends JModelLegacy {
     public function modify($id,$ruolo){
 
 
-        $sql="update u3ukon_gg_ruoli set ruolo='".$ruolo."' where id=".$id;
+        $sql="update u3kon_gg_ruoli set ruolo='".$ruolo."' where id=".$id;
         
         $this->_db->setQuery($sql);
         $result=$this->_db->execute();
@@ -57,7 +67,7 @@ class ggpmModelRuoli  extends JModelLegacy {
 
         $query=$this->_db->getQuery(true);
         $query->select('*');
-        $query->from('u3ukon_gg_ruoli');
+        $query->from('u3kon_gg_ruoli');
         $this->_db->setQuery($query);
 
         $result=$this->_db->loadAssocList();

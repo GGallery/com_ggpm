@@ -31,28 +31,28 @@ class ggpmModelDipendenti  extends JModelLegacy {
         $object->valore_orario=$valore_orario;
         $object->timestamp=Date('Y-m-d h:i:s',time());
 
-        $result=$this->_db->insertObject('u3ukon_gg_dipendenti',$object);
+        $result=$this->_db->insertObject('u3kon_gg_dipendenti',$object);
         return $result;
     }
 
     public function delete($id){
 
 
-        $sql="delete from u3ukon_gg_dipendenti where id=".$id;
+        $sql="delete from u3kon_gg_dipendenti where id=".$id;
         $this->_db->setQuery($sql);
         $result=$this->_db->execute();
-        var_dump($result);
+
         return $result;
     }
 
     public function modify($id,$nome,$cognome,$valore_orario){
 
 
-        $sql="update u3ukon_gg_dipendenti set nome='".$nome."', cognome='".$cognome."', valore_orario='".$valore_orario."' where id=".$id;
+        $sql="update u3kon_gg_dipendenti set nome='".$nome."', cognome='".$cognome."', valore_orario='".$valore_orario."' where id=".$id;
 
         $this->_db->setQuery($sql);
         $result=$this->_db->execute();
-        var_dump($result);
+
         return $result;
     }
 
@@ -60,12 +60,27 @@ class ggpmModelDipendenti  extends JModelLegacy {
 
         $query=$this->_db->getQuery(true);
         $query->select('*');
-        $query->from('u3ukon_gg_dipendenti');
+        $query->from('u3kon_gg_dipendenti');
         $this->_db->setQuery($query);
 
-        $result=$this->_db->loadAssocList();
+        $dipendenti=$this->_db->loadAssocList();
 
-        return $result;
+        foreach ($dipendenti as &$dipendente) {
+
+            $query_=$this->_db->getQuery(true);
+            $query_->select('m.id as id, r.ruolo as ruolo ');
+            $query_->from('u3kon_gg_dipendenti as d');
+            $query_->join('left','u3kon_gg_map_dip_ruolo as m on d.id=m.id_dipendente');
+            $query_->join('left','u3kon_gg_ruoli as r on r.id=m.id_ruolo');
+            $query_->where('d.id='.$dipendente['id']);
+            $this->_db->setQuery($query_);
+            $ruoli=$this->_db->loadAssocList();
+            $dipendente['ruoli']=$ruoli;
+
+        }
+
+
+        return $dipendenti;
 
 
 

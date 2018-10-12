@@ -55,6 +55,19 @@ class ggpmControllerRuoli extends JControllerLegacy
         $this->_app->close();
 
     }
+
+    public function delete_map(){
+
+        $model=new ggpmModelRuoli();
+        if($model->delete_map($this->_filterparam->id)) {
+            echo "1";
+        }else{
+            echo "0";
+        }
+        $this->_app->close();
+
+    }
+
     public function modify(){
 
         $model=new ggpmModelRuoli();
