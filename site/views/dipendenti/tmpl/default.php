@@ -114,6 +114,7 @@ defined('_JEXEC') or die;
         });
     }
 
+    //questa funzione intercetta l'evento click sui pulsanti di modifica, e trasforma i campi testo della riga in campi input. Prima però riporta tutti a testo
     jQuery(".modify_button").click(function (event) {
 
         jQuery('.start_hidden_input').hide()
@@ -128,11 +129,30 @@ defined('_JEXEC') or die;
         jQuery("#span_valore_orario_"+str).toggle();
     });
 
+    //QUESTA E' LA PROCEDURA DI INVIO DEI DATI MODIFICATI
     jQuery(".oi-thumb-up").click(function (event) {
 
 
         var str=jQuery(event.target).attr('id').toString();
-        console.log(str);
+        console.log(str.substr(13,str.length-13));
+        var id=str.substr(13,str.length-13);
+        var cognome=jQuery('#input_cognome_'+id).val().toString();
+        var nome=jQuery('#input_nome_'+id).val().toString();
+        var valore_orario=jQuery('#input_valore_orario_'+id).val().toString();
+        jQuery.ajax({
+            method: "POST",
+            cache: false,
+            url: 'index.php?option=com_ggpm&task=dipendenti.modify&id='+id+'&cognome='+cognome+'&nome='+nome+'&valore_orario='+valore_orario
+
+        }).done(function() {
+
+            alert("modifiche riuscite");
+            location.reload();
+
+
+        });
+
+
     });
 
 

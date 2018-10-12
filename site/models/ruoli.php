@@ -5,7 +5,7 @@
  * Date: 04/05/2017
  * Time: 17:03
  */
-class ggpmModelDipendenti  extends JModelLegacy {
+class ggpmModelRuoli  extends JModelLegacy {
 
     protected $_db;
     private $_params;
@@ -22,45 +22,42 @@ class ggpmModelDipendenti  extends JModelLegacy {
 
     }
 
-    public function insert($nome,$cognome,$valore_orario){
+    public function insert($ruolo){
 
 
         $object = new StdClass;
-        $object->nome=$nome;
-        $object->cognome=$cognome;
-        $object->valore_orario=$valore_orario;
+        $object->ruolo=$ruolo;
         $object->timestamp=Date('Y-m-d h:i:s',time());
-
-        $result=$this->_db->insertObject('u3ukon_gg_dipendenti',$object);
+        $result=$this->_db->insertObject('u3ukon_gg_ruoli',$object);
         return $result;
     }
 
     public function delete($id){
 
 
-        $sql="delete from u3ukon_gg_dipendenti where id=".$id;
+        $sql="delete from u3ukon_gg_ruoli where id=".$id;
         $this->_db->setQuery($sql);
         $result=$this->_db->execute();
-        var_dump($result);
+
         return $result;
     }
 
-    public function modify($id,$nome,$cognome,$valore_orario){
+    public function modify($id,$ruolo){
 
 
-        $sql="update u3ukon_gg_dipendenti set nome='".$nome."', cognome='".$cognome."', valore_orario='".$valore_orario."' where id=".$id;
-
+        $sql="update u3ukon_gg_ruoli set ruolo='".$ruolo."' where id=".$id;
+        
         $this->_db->setQuery($sql);
         $result=$this->_db->execute();
-        var_dump($result);
+
         return $result;
     }
 
-    public function getDipendenti(){
+    public function getRuoli(){
 
         $query=$this->_db->getQuery(true);
         $query->select('*');
-        $query->from('u3ukon_gg_dipendenti');
+        $query->from('u3ukon_gg_ruoli');
         $this->_db->setQuery($query);
 
         $result=$this->_db->loadAssocList();
