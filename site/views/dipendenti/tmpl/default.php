@@ -98,8 +98,8 @@ defined('_JEXEC') or die;
                                       </div>';
                                 }
                             }?>
-                            <div ><select class="start_hidden_input select_nuovo_ruolo" id="nuovo_ruolo_<?php echo $dipendente['id']; ?>">
-
+                            <div ><select class="start_hidden_input select_nuovo_ruolo" id="nuovo_ruolo_<?php echo $dipendente['id']; ?>" onchange=''>
+                                    <option value='0'>aggiungi un ruolo</option>
                                     <?php foreach ($this->ruoli as $ruolo){
 
                                         echo '<option value='.$ruolo['id'].'>'.$ruolo['ruolo'].'</option>';
@@ -140,6 +140,8 @@ defined('_JEXEC') or die;
 </div>
 
 <script type="text/javascript">
+
+    var change_operation=null;
     function insertclick(){
 
         var valore_orario=jQuery("#valore_orario").val().replace(",",".");
@@ -170,6 +172,7 @@ defined('_JEXEC') or die;
         jQuery("#span_cognome_"+str).toggle();
         jQuery("#span_nome_"+str).toggle();
         jQuery("#span_valore_orario_"+str).toggle();
+        change_operation='modify_anagrafica';
     });
 
     jQuery(".add_ruolo").click(function (event) {
@@ -177,27 +180,15 @@ defined('_JEXEC') or die;
         jQuery(".select_nuovo_ruolo").hide();
         var id=jQuery(event.target).attr('id').toString();
         id=id.substr(9,id.length-9);
-
         jQuery("#nuovo_ruolo_"+id).toggle();
+        jQuery("#confirm_button_"+id).toggle();
+        change_operation='add_ruolo';
 
     });
 
     jQuery(".select_nuovo_ruolo").change(function(event){
 
-        var id=jQuery(event.target).attr('value').toString();
-        console.log('valore id='+id.toString());
-        jQuery.ajax({
-            method: "POST",
-            cache: false,
-            url: 'index.php?option=com_ggpm&task=ruoli.add_map&id=' + id.toString()
 
-        }).done(function() {
-
-            alert("modifiche riuscite");
-            location.reload();
-
-
-        });
 
 
     });
@@ -205,26 +196,49 @@ defined('_JEXEC') or die;
     //QUESTA E' LA PROCEDURA DI INVIO DEI DATI MODIFICATI
     jQuery(".oi-thumb-up").click(function (event) {
 
+        var str = jQuery(event.target).attr('id').toString();
+        console.log(str.substr(13, str.length - 13));
+        var id = str.substr(13, str.length - 13);
 
-        var str=jQuery(event.target).attr('id').toString();
-        console.log(str.substr(13,str.length-13));
-        var id=str.substr(13,str.length-13);
-        var cognome=jQuery('#input_cognome_'+id).val().toString();
-        var nome=jQuery('#input_nome_'+id).val().toString();
-        var valore_orario=jQuery('#input_valore_orario_'+id).val().toString();
-        jQuery.ajax({
-            method: "POST",
-            cache: false,
-            url: 'index.php?option=com_ggpm&task=dipendenti.modify&id='+id+'&cognome='+cognome+'&nome='+nome+'&valore_orario='+valore_orario
+        if(change_operation=='modify_anagrafica') {
 
-        }).done(function() {
+            var cognome = jQuery('#input_cognome_' + id).val().toString();
+            var nome = jQuery('#input_nome_' + id).val().toString();
+            var valore_orario = jQuery('#input_valore_orario_' + id).val().toString();
+            jQuery.ajax({
+                method: "POST",
+                cache: false,
+                url: 'index.php?option=com_ggpm&task=dipendenti.modify&id=' + id + '&cognome=' + cognome + '&nome=' + nome + '&valore_orario=' + valore_orario
 
-            alert("modifiche riuscite");
-            location.reload();
+            }).done(function () {
+
+                alert("modifiche riuscite");
+                location.reload();
 
 
-        });
+            });
 
+        }
+
+        if(change_operation=='add_ruolo'){
+
+            var ruolo_id=jQuery("#nuovo_ruolo_"+id).val().toString();// PRENDE IL VALUE DELLA OPTION, QUINDI ID DEL RUOLO
+            console.log(ruolo_id);
+
+            jQuery.ajax({
+                method: "POST",
+                cache: false,
+                url: 'index.php?option=com_ggpm&task=ruoli.insert_map&id_dipendente=' + id.toString()+'&id='+ruolo_id.toString()
+
+            }).done(function() {
+                alert("aggiunto ruolo");
+                location.reload();
+            }).fail(function($xhr) {
+                var data = $xhr.responseJSON;
+                console.log(data);
+            });
+
+        }
 
     });
 

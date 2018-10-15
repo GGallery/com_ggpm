@@ -29,13 +29,25 @@ class ggpmControllerRuoli extends JControllerLegacy
         $this->_filterparam = new stdClass();
         $this->_filterparam->id=JRequest::getVar('id');
         $this->_filterparam->ruolo=JRequest::getVar('ruolo');
-
+        $this->_filterparam->id_dipendente=JRequest::getVar('id_dipendente');
 
     }
     public function insert(){
 
         $model=new ggpmModelRuoli();
         if($model->insert($this->_filterparam->ruolo)) {
+            echo "1";
+        }else{
+            echo "0";
+        }
+        $this->_app->close();
+
+    }
+
+    public function insert_map(){
+
+        $model=new ggpmModelRuoli();
+        if($model->insert_map($this->_filterparam->id_dipendente,$this->_filterparam->id)) {
             echo "1";
         }else{
             echo "0";

@@ -56,11 +56,14 @@ class ggpmModelDipendenti  extends JModelLegacy {
         return $result;
     }
 
-    public function getDipendenti(){
+    public function getDipendenti($id=null){
 
         $query=$this->_db->getQuery(true);
         $query->select('*');
         $query->from('u3kon_gg_dipendenti');
+        if($id!=null)
+            $query->where('id='.$id);
+
         $this->_db->setQuery($query);
 
         $dipendenti=$this->_db->loadAssocList();
@@ -81,10 +84,9 @@ class ggpmModelDipendenti  extends JModelLegacy {
 
 
         return $dipendenti;
-
-
-
-    }
+      }
 
 }
+
+
 

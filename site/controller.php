@@ -29,6 +29,8 @@ class ggpmController extends JControllerLegacy {
         JHtml::script(Juri::base() . 'components/com_ggpm/libraries/js/mediaelement-and-player.js');
         JHtml::script(Juri::base() . 'components/com_ggpm/libraries/js/bootstrap.min.js');
 
+
+
     }
 
 }

@@ -32,6 +32,19 @@ class ggpmModelRuoli  extends JModelLegacy {
         return $result;
     }
 
+    public function insert_map($id_dipendente, $id_ruolo){
+
+        $object = new StdClass;
+        $object->id_dipendente=$id_dipendente;
+        $object->id_ruolo=$id_ruolo;
+        $object->timestamp=Date('Y-m-d h:i:s',time());
+        $result=$this->_db->insertObject('u3kon_gg_map_dip_ruolo',$object);
+        return $result;
+
+        return $result;
+    }
+
+
     public function delete($id){
 
 
