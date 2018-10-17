@@ -22,13 +22,14 @@ class ggpmModelDipendenti  extends JModelLegacy {
 
     }
 
-    public function insert($nome,$cognome,$valore_orario){
+    public function insert($nome,$cognome,$valore_orario,$monte_ore){
 
 
         $object = new StdClass;
         $object->nome=$nome;
         $object->cognome=$cognome;
         $object->valore_orario=$valore_orario;
+        $object->monte_ore=$monte_ore;
         $object->timestamp=Date('Y-m-d h:i:s',time());
 
         $result=$this->_db->insertObject('u3kon_gg_dipendenti',$object);
@@ -45,10 +46,10 @@ class ggpmModelDipendenti  extends JModelLegacy {
         return $result;
     }
 
-    public function modify($id,$nome,$cognome,$valore_orario){
+    public function modify($id,$nome,$cognome,$valore_orario,$monte_ore){
 
 
-        $sql="update u3kon_gg_dipendenti set nome='".$nome."', cognome='".$cognome."', valore_orario='".$valore_orario."' where id=".$id;
+        $sql="update u3kon_gg_dipendenti set nome='".$nome."', cognome='".$cognome."', valore_orario='".$valore_orario."', monte_ore='".$monte_ore."' where id=".$id;
 
         $this->_db->setQuery($sql);
         $result=$this->_db->execute();

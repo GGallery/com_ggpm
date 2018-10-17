@@ -25,10 +25,13 @@ defined('_JEXEC') or die;
 
         width: 10%;
     }
+    .monte_ore{
 
+        width: 10%;
+    }
     #contenitore_ruoli{
 
-        width: 20%;
+        width: 10%;
 
     }
 
@@ -69,6 +72,7 @@ defined('_JEXEC') or die;
             <th>COGNOME</th>
             <th>NOME</th>
             <th>VALORE ORARIO</th>
+            <th>MONTE ORE</th>
             <th>RUOLI</th>
             <th></th>
         </tr>
@@ -87,6 +91,8 @@ defined('_JEXEC') or die;
                         <input id="input_nome_<?php echo $dipendente['id']; ?>" class="start_hidden_input form-control form-control-sm" type="text" value="<?php echo $dipendente['nome']; ?>"></td>
                     <td class="valore_orario"><span class="start_span" id="span_valore_orario_<?php echo $dipendente['id']; ?>"><?php echo $dipendente['valore_orario']; ?></span>
                         <input id="input_valore_orario_<?php echo $dipendente['id']; ?>" class="start_hidden_input form-control form-control-sm" type="text" value="<?php echo $dipendente['valore_orario']; ?>"></td>
+                    <td class="monte_ore"><span class="start_span" id="span_monte_ore_<?php echo $dipendente['id']; ?>"><?php echo $dipendente['monte_ore']; ?></span>
+                        <input id="input_monte_ore_<?php echo $dipendente['id']; ?>" class="start_hidden_input form-control form-control-sm" type="text" value="<?php echo $dipendente['monte_ore']; ?>"></td>
                     <td id="contenitore_ruoli">
 
                             <?php foreach ($dipendente['ruoli'] as $ruolo) {
@@ -130,6 +136,7 @@ defined('_JEXEC') or die;
         <div class="col-xs-4 col-md-4 text-info"><h5>nome:</h5> <input class="form-control form-control-sm" type="text" id="nome"></div>
         <div class="col-xs-4 col-md-4 text-info"><h5>cognome:</h5> <input class="form-control form-control-sm" type="text" id="cognome"></div>
         <div class="col-xs-4 col-md-2 text-info"><h5>valore orario:</h5> <input class="form-control form-control-sm" type="text" id="valore_orario"></div>
+        <div class="col-xs-4 col-md-2 text-info"><h5>monte ore:</h5> <input class="form-control form-control-sm" type="text" id="monte_ore"></div>
     </div>
 
     <div  class="row insertbox">
@@ -145,10 +152,11 @@ defined('_JEXEC') or die;
     function insertclick(){
 
         var valore_orario=jQuery("#valore_orario").val().replace(",",".");
+        var monte_ore=jQuery("#monte_ore").val().replace(",",".");
         jQuery.ajax({
             method: "POST",
             cache: false,
-            url: 'index.php?option=com_ggpm&task=dipendenti.insert&nome='+jQuery("#nome").val()+'&cognome='+jQuery("#cognome").val()+'&valore_orario='+valore_orario
+            url: 'index.php?option=com_ggpm&task=dipendenti.insert&nome='+jQuery("#nome").val()+'&cognome='+jQuery("#cognome").val()+'&valore_orario='+valore_orario+'&monte_ore='+monte_ore
 
         }).done(function() {
 
@@ -168,10 +176,12 @@ defined('_JEXEC') or die;
         jQuery("#input_cognome_"+str).toggle();
         jQuery("#input_nome_"+str).toggle();
         jQuery("#input_valore_orario_"+str).toggle();
+        jQuery("#input_monte_ore_"+str).toggle();
         jQuery("#confirm_button_"+str).toggle();
         jQuery("#span_cognome_"+str).toggle();
         jQuery("#span_nome_"+str).toggle();
         jQuery("#span_valore_orario_"+str).toggle();
+        jQuery("#span_monte_ore_"+str).toggle();
         change_operation='modify_anagrafica';
     });
 
@@ -205,10 +215,11 @@ defined('_JEXEC') or die;
             var cognome = jQuery('#input_cognome_' + id).val().toString();
             var nome = jQuery('#input_nome_' + id).val().toString();
             var valore_orario = jQuery('#input_valore_orario_' + id).val().toString();
+            var monte_ore = jQuery('#input_monte_ore_' + id).val().toString();
             jQuery.ajax({
                 method: "POST",
                 cache: false,
-                url: 'index.php?option=com_ggpm&task=dipendenti.modify&id=' + id + '&cognome=' + cognome + '&nome=' + nome + '&valore_orario=' + valore_orario
+                url: 'index.php?option=com_ggpm&task=dipendenti.modify&id=' + id + '&cognome=' + cognome + '&nome=' + nome + '&valore_orario=' + valore_orario+ '&monte_ore=' + monte_ore
 
             }).done(function () {
 
