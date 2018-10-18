@@ -21,7 +21,7 @@ require_once JPATH_COMPONENT . '/models/vocicosto.php';
 
 class ggpmViewPianiformativi extends JViewLegacy {
 
-    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo;
+    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale;
 
 
     function display($tpl = null)
@@ -35,6 +35,7 @@ class ggpmViewPianiformativi extends JViewLegacy {
         $this->budget=null;
         $vociModel=new ggpmModelVocicosto();
         $this->voci_costo=$vociModel->getVocicosto();
+        $this->totale=0;
         if($this->id_piano_formativo_attivo!=null){
             $model=new ggpmModelBudget();
             $this->budget=$model->getBudget(null,$this->id_piano_formativo_attivo);
