@@ -43,12 +43,13 @@ defined('_JEXEC') or die;
         background-color: #5bc0de;
     }
 
+
 </style>
 </head>
 
 
 <div class="container">
-    <div class="row justify-content-between background-green">
+    <div class="row  background-green">
 
         <div class="col-10">
 
@@ -102,7 +103,7 @@ defined('_JEXEC') or die;
         </div>
 
     </div>
-    <div class="row background-cyan" style="margin-top: 20px;">
+    <div class="row " style="margin-top: 20px; margin-bottom: 20px;">
         <table class="table table-bordered">
 
             <thead>
@@ -121,8 +122,8 @@ defined('_JEXEC') or die;
             </tr>
             </tbody>
         </table>
-
-        <div class="row justify-content-between">
+    </div>
+    <div class="row justify-content-between">
 
             <div class="col-6">
                 <table class="table table-bordered table-striped">
@@ -181,7 +182,89 @@ defined('_JEXEC') or die;
                  </div>
              </div>
          </div>
-    </div>
+
+    <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr class="d-flex"><th class="col-12"> INSERISCI NUOVA ATTIVITA'</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr class="d-flex">
+                        <td class="col-4">descrizione
+                            <input class="form-control form-control-sm" type="text" id="task_descrizione">
+                        </td>
+                        <td class="col-4">data inizio
+                            <input class="form-control form-control-sm" type="date" id="task_data_inizio">
+                        </td>
+                        <td class="col-4">durata in giorni
+                            <input class="form-control form-control-sm" type="text" id="task_durata">
+                        </td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="col-4">
+                            <span id="data_fine_calcolata">data fine calcolata</span>
+                        </td>
+
+                        <td class="col-4">ore
+                            <input class="form-control form-control-sm" type="text" id="task_ore">
+                        </td>
+                        <td class="col-4"><br>
+                            <select class="form-control form-control-sm" id="task_voce_costo">
+                                <option>scegli una voce di costo</option>
+                                <?php foreach ($this->budget as $item){
+
+                                    echo '<option value='.$item['id'].'>'.$item['voce_costo'].'</option>';
+                                }
+
+                                ?>
+
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="col-4">
+                            <select class="form-control form-control-sm" type="text" id="task_ruolo">
+                                <option>scegli un ruolo</option>
+                                <?php foreach ($this->ruoli as $item){
+
+                                    echo '<option value='.$item['id'].'>'.$item['ruolo'].'</option>';
+                                }
+
+                                ?>
+
+                            </select>
+                        </td>
+                        <td class="col-4">
+                        <select class="form-control form-control-sm" type="text" id="task_dipendente">
+                            <option>scegli un dipendente</option>
+                        </select>
+                        </td>
+                        <td class="col-4">
+                            <select class="form-control form-control-sm" type="text" id="task_task_propedeutico">
+                                <option>scegli un task propedeutico</option>
+                                <?php if($this->task!=null) {
+                                    foreach ($this->task as $item) {
+
+                                        echo '<option value=' . $item['id'] . '>' . $item['descrizione'] . '</option>';
+                                    }
+                                }
+                                ?>
+
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="col-4">valore orario
+                            <input class="form-control form-control-sm" type="text" id="task_valore_orario">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
    <div class="row">
         OTTOBRE
         <table class="table table-bordered" id="calendario">
@@ -202,6 +285,20 @@ defined('_JEXEC') or die;
 
 <script type="text/javascript">
 
+    var ruoli_dipendenti=[];
+
+    ruoli_dipendenti=[
+
+    <?php if($this->array_ruolo_dipendente!=null){
+
+        foreach ($this->array_ruolo_dipendente as $item){
+            echo "{ruolo:'".$item['ruolo']."',nome:'".$item['cognome']."'},";
+
+        }
+    }
+    ?>
+    ]
+    console.log(ruoli_dipendenti.filter(x => x.ruolo === 'progettista'));
     var piano_formativo_attivo=<?php echo $this->id_piano_formativo_attivo; ?>
 
     function insertpianoclick(){

@@ -18,10 +18,13 @@ jimport('joomla.application.component.helper');
 
 require_once JPATH_COMPONENT . '/models/budget.php';
 require_once JPATH_COMPONENT . '/models/vocicosto.php';
+require_once JPATH_COMPONENT . '/models/ruoli.php';
+require_once JPATH_COMPONENT . '/models/task.php';
+require_once JPATH_COMPONENT . '/models/dipendenti.php';
 
 class ggpmViewPianiformativi extends JViewLegacy {
 
-    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale;
+    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale,$array_ruolo_dipendente;
 
 
     function display($tpl = null)
@@ -35,12 +38,17 @@ class ggpmViewPianiformativi extends JViewLegacy {
         $this->budget=null;
         $vociModel=new ggpmModelVocicosto();
         $this->voci_costo=$vociModel->getVocicosto();
+        $ruoliModel=new ggpmModelRuoli();
+        $this->ruoli=$ruoliModel->getRuoli();
+        $dipendentiModel=new ggpmModelDipendenti();
+        $this->array_ruolo_dipendente=$dipendentiModel->getArrayRuoloDipendente();
         $this->totale=0;
         if($this->id_piano_formativo_attivo!=null){
             $model=new ggpmModelBudget();
             $this->budget=$model->getBudget(null,$this->id_piano_formativo_attivo);
             $this->descrizione_piano_formativo_attivo=$this->getModel()->getPianiformativi($this->id_piano_formativo_attivo)[0]['descrizione'];
-
+            $taskModel=new ggpmModelTask();
+            $this->task=$taskModel->getTask(null,$this->id_piano_formativo_attivo);
         }
         parent::display($tpl);
     }
