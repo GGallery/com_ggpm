@@ -22,7 +22,7 @@ class ggpmModelTask  extends JModelLegacy {
 
     }
 
-    public function insert($descrizione,$id_piano_formativo,$data_inizio,$durata,$id_voce_costo,$id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario){
+    public function insert($id_piano_formativo,$descrizione,$data_inizio,$durata,$ore,$id_voce_costo,$id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario){
 
 
         $object = new StdClass;
@@ -30,6 +30,7 @@ class ggpmModelTask  extends JModelLegacy {
         $object->descrizione=$descrizione;
         $object->data_inizio=$data_inizio;
         $object->durata=$durata;
+        $object->ore=$ore;
         $object->id_voce_costo=$id_voce_costo;
         $object->id_ruolo=$id_ruolo;
         $object->id_dipendente=$id_dipendente;

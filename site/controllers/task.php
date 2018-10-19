@@ -32,6 +32,7 @@ class ggpmControllerTask extends JControllerLegacy
         $this->_filterparam->descrizione=JRequest::getVar('descrizione');
         $this->_filterparam->data_inizio=JRequest::getVar('data_inizio');
         $this->_filterparam->durata=JRequest::getVar('durata');
+        $this->_filterparam->ore=JRequest::getVar('ore');
         $this->_filterparam->id_voce_costo=JRequest::getVar('id_voce_costo');
         $this->_filterparam->id_ruolo=JRequest::getVar('id_ruolo');
         $this->_filterparam->id_dipendente=JRequest::getVar('id_dipendente');
@@ -42,7 +43,7 @@ class ggpmControllerTask extends JControllerLegacy
     public function insert(){
 
         $model=new ggpmModeltask();
-        if($model->insert($this->_filterparam->id_piano_formativo,$this->_filterparam->descrizione,$this->_filterparam->data_inizio,$this->_filterparam->durata,$this->_filterparam->id_voce_costo,$this->_filterparam->id_ruolo,
+        if($model->insert($this->_filterparam->id_piano_formativo,$this->_filterparam->descrizione,$this->_filterparam->data_inizio,$this->_filterparam->durata,$this->_filterparam->ore,$this->_filterparam->id_voce_costo,$this->_filterparam->id_ruolo,
                             $this->_filterparam->id_dipendente,$this->_filterparam->id_task_propedeutico,$this->_filterparam->valore_orario)) {
             echo "1";
         }else{

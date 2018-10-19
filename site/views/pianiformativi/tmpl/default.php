@@ -203,7 +203,7 @@ defined('_JEXEC') or die;
                     </tr>
                     <tr class="d-flex">
                         <td class="col-4">
-                            <span id="data_fine_calcolata">data fine calcolata</span>
+                            <span id="task_data_fine_calcolata">data fine calcolata</span>
                         </td>
 
                         <td class="col-4">ore
@@ -258,6 +258,7 @@ defined('_JEXEC') or die;
                         <td class="col-4">valore orario
                             <input class="form-control form-control-sm" type="text" id="task_valore_orario">
                         </td>
+                        <td class="col-8"> <button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewtask" value="conferma" onclick="inserttaskclick()" type="button">CONFERMA</button></td>
                     </tr>
                     </tbody>
                 </table>
@@ -292,14 +293,68 @@ defined('_JEXEC') or die;
     <?php if($this->array_ruolo_dipendente!=null){
 
         foreach ($this->array_ruolo_dipendente as $item){
-            echo "{ruolo:'".$item['ruolo']."',nome:'".$item['cognome']."'},";
+            echo "{ruolo:'".$item['ruolo_id']."',cognome:'".$item['cognome']."',id:'".$item['id']."'},";
 
         }
     }
     ?>
     ]
-    console.log(ruoli_dipendenti.filter(x => x.ruolo === 'progettista'));
-    var piano_formativo_attivo=<?php echo $this->id_piano_formativo_attivo; ?>
+   // console.log(ruoli_dipendenti.filter(x => x.ruolo === 'progettista'));
+    var piano_formativo_attivo=<?php echo $this->id_piano_formativo_attivo; ?>;
+
+
+    jQuery("#piano_formativo").change(function(event){
+
+        var id=jQuery("#piano_formativo").val();
+        window.open("?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo="+id.toString(),"_self")
+    });
+
+
+
+    jQuery("#task_ruolo").change(function(){
+
+         var ruolo_scelto=jQuery("#task_ruolo").val();
+        //console.log(ruolo_scelto);
+         jQuery("#task_dipendente option").remove();
+        var dipendenti_da_caricare=ruoli_dipendenti.filter(x => x.ruolo == ruolo_scelto);
+        //console.log(dipendenti_da_caricare);
+        for (i=0; i<dipendenti_da_caricare.length; i++){
+
+            jQuery("#task_dipendente").append("<option value="+dipendenti_da_caricare[i]['id']+">"+dipendenti_da_caricare[i]['cognome']+"</option>");
+        }
+    });
+
+
+
+    jQuery("#task_durata").keyup(function(){
+
+
+        update_data_fine();
+    });
+
+    jQuery("#task_data_inizio").change(function(){
+
+        update_data_fine();
+    });
+
+    function update_data_fine() {
+
+        if(jQuery("#task_data_inizio").val().length>0 && !isNaN(parseInt(jQuery("#task_durata").val()))){
+            //var data_inizio=new Date();
+            //console.log(data_inizio);
+            var giorni_da_aggiungere=jQuery("#task_durata").val();
+            console.log(giorni_da_aggiungere);
+            var data_fine=new Date(jQuery("#task_data_inizio").val());
+            data_fine.setDate(data_fine.getDate()+parseInt(giorni_da_aggiungere))
+            console.log(data_fine);
+            jQuery("#task_data_fine_calcolata").html(data_fine.getDate().toString()+"/"+(data_fine.getMonth()+1).toString()+"/"+data_fine.getFullYear());
+
+        }
+
+
+
+    }
+
 
     function insertpianoclick(){
 
@@ -331,6 +386,45 @@ defined('_JEXEC') or die;
             method: "POST",
             cache: false,
             url: 'index.php?option=com_ggpm&task=budget.insert&id_voce_costo='+budget_voce_costo+'&budget='+budget_budget+'&id_piano_formativo='+piano_formativo
+
+        }).done(function() {
+
+            alert("inserimento riuscito");
+            location.reload();
+
+
+        });
+    }
+
+    function inserttaskclick(){
+
+        var id_piano_formativo=piano_formativo_attivo;
+        var descrizione=jQuery("#task_descrizione").val();
+        var data_inizio=jQuery("#task_data_inizio").val();
+        var durata=jQuery("#task_durata").val();
+        var ore=jQuery("#task_ore").val();
+        var id_voce_costo=jQuery("#task_voce_costo").val();
+        var id_ruolo=jQuery("#task_ruolo").val();
+        var id_dipendente=jQuery("#task_dipendente").val();
+        var id_task_propedeutico=jQuery("#task_task_propedeutico").val();
+
+        var valore_orario=jQuery("#task_valore_orario").val().replace(",",".");
+
+        jQuery.ajax({
+            method: "POST",
+            cache: false,
+            url: 'index.php?option=com_ggpm&task=task.insert&id_piano_formativo='+id_piano_formativo
+            +'&descrizione='+descrizione
+            +'&data_inizio='+data_inizio
+            +'&durata='+durata
+            +'&ore='+ore
+            +'&id_voce_costo='+id_voce_costo
+            +'&id_ruolo='+id_ruolo
+            +'&id_dipendente='+id_dipendente
+            +'&id_task_propedeutico='+id_task_propedeutico
+            +'&valore_orario='+valore_orario
+
+
 
         }).done(function() {
 
@@ -417,11 +511,6 @@ defined('_JEXEC') or die;
     });
 
 
-    jQuery("#piano_formativo").change(function(event){
-
-        var id=jQuery("#piano_formativo").val();
-        window.open("?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo="+id.toString(),"_self")
-    });
 
     function deletepianoclick(id) {
 
