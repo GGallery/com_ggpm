@@ -77,4 +77,12 @@ class ggpmControllerTask extends JControllerLegacy
 
     }
 
+    public function gettask(){
+
+        $model=new ggpmModelTask();
+        echo json_encode($model->getTask($this->_filterparam->id,null));
+        $this->_app->close();
+
+    }
+
 }

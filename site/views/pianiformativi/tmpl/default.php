@@ -124,7 +124,7 @@ defined('_JEXEC') or die;
         </table>
     </div>
     <div class="row justify-content-between">
-
+            <?php if($this->id_piano_formativo_attivo){?>
             <div class="col-6">
                 <table class="table table-bordered table-striped">
                     <thead><th class="col-12 d-flex">GESTIONE BUDGET <span class="red descrizione_piano_attivo"><?php echo $this->descrizione_piano_formativo_attivo ?></span></th></thead>
@@ -170,6 +170,7 @@ defined('_JEXEC') or die;
                     </tbody>
                 </table>
             </div>
+            <?php }?>
             <div class="col-6">
                  <div class="row ">
                      <div class="col-6 border border-primary rounded">CRUSCOTTO DIPENDENTI</div>
@@ -182,7 +183,7 @@ defined('_JEXEC') or die;
                  </div>
              </div>
          </div>
-
+    <?php if($this->id_piano_formativo_attivo){?>
     <div class="row">
             <div class="col-12">
                 <table class="table table-bordered">
@@ -264,16 +265,23 @@ defined('_JEXEC') or die;
                 </table>
             </div>
         </div>
+        <?php }?>
 
+   <div class="table-responsive">
 
-   <div class="row">
-        OTTOBRE
         <table class="table table-bordered" id="calendario">
             <thead>
-                   <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+            <tr class="d-flex"><th class="col-12"> CALENDARIO</th></tr>
+            <tr class="d-flex"><th class="col-2">mese precedente</th><th class="col-8">primo mese</th><th class="col-2">mese successivo</th></tr>
+                   <tr  class="d-flex">
+                       <?php for($i=1;$i<32;$i++){
+
+                            echo '<td style="width: 3%">'.$i.'</td>';
+                       }?>
+                   </tr>
             </thead>
             <tbody>
-            <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+            <tr  class="d-flex"><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
 
 
             </tbody>
@@ -293,14 +301,14 @@ defined('_JEXEC') or die;
     <?php if($this->array_ruolo_dipendente!=null){
 
         foreach ($this->array_ruolo_dipendente as $item){
-            echo "{ruolo:'".$item['ruolo_id']."',cognome:'".$item['cognome']."',id:'".$item['id']."'},";
+            echo "{ruolo:'".$item['ruolo_id']."',cognome:'".$item['cognome']."',id:'".$item['id']."',valore_orario:'".$item['valore_orario']."'},";
 
         }
     }
     ?>
     ]
    // console.log(ruoli_dipendenti.filter(x => x.ruolo === 'progettista'));
-    var piano_formativo_attivo=<?php echo $this->id_piano_formativo_attivo; ?>;
+    var piano_formativo_attivo=<?php if($this->id_piano_formativo_attivo){ echo $this->id_piano_formativo_attivo; } else { echo "null";}?>;
 
 
     jQuery("#piano_formativo").change(function(event){
@@ -324,6 +332,10 @@ defined('_JEXEC') or die;
         }
     });
 
+    jQuery("#task_dipendente").change(function(){
+
+        jQuery("#task_valore_orario").html()
+    });
 
 
     jQuery("#task_durata").keyup(function(){
@@ -336,6 +348,47 @@ defined('_JEXEC') or die;
 
         update_data_fine();
     });
+
+
+
+
+    jQuery("#task_task_propedeutico").change(function(){
+
+        var id_task_propedeutico=jQuery("#task_task_propedeutico").val();
+
+        jQuery.ajax({
+            method: "POST",
+            cache: false,
+            url: 'index.php?option=com_ggpm&task=task.gettask&id='+id_task_propedeutico
+
+        }).done(function(data) {
+
+            //console.log(data)
+            //console.log(JSON.parse(data))
+            //console.log(JSON.parse(data)[0].data_inizio);
+            var data_to_set=new Date(JSON.parse(data)[0].data_inizio);
+            console.log(data_to_set)
+            data_to_set.setDate(data_to_set.getDate()+parseInt(JSON.parse(data)[0].durata));
+            console.log(data_to_set)
+            var mese_to_set=("0"+(data_to_set.getMonth()+1)).toString().slice(-2)
+
+            if(data_to_set.getDate().toString().length===1) {
+                var giorno_to_set = ("0" + (data_to_set.getDate().toString()).slice(-2))
+            }else{
+                var giorno_to_set = data_to_set.getDate().toString()
+            }
+
+            jQuery("#task_data_inizio").val(data_to_set.getFullYear()+"-"+mese_to_set+"-"+giorno_to_set);
+
+        });
+    })
+
+
+
+
+
+
+
 
     function update_data_fine() {
 

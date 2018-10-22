@@ -28,7 +28,7 @@ class ggpmModelTask  extends JModelLegacy {
         $object = new StdClass;
         $object->id_piano_formativo=$id_piano_formativo;
         $object->descrizione=$descrizione;
-        $object->data_inizio=$data_inizio;
+        $object->data_inizio = $data_inizio;
         $object->durata=$durata;
         $object->ore=$ore;
         $object->id_voce_costo=$id_voce_costo;
@@ -83,13 +83,14 @@ class ggpmModelTask  extends JModelLegacy {
             $query->where('id='.$id);
         if($id_piano_formativo!=null)
             $query->where('id_piano_formativo='.$id_piano_formativo);
-
+        $query->order('data_inizio ASC');
         $this->_db->setQuery($query);
 
         $task=$this->_db->loadAssocList();
 
         return $task;
       }
+
 
 }
 

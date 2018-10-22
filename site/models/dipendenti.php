@@ -90,7 +90,7 @@ class ggpmModelDipendenti  extends JModelLegacy {
       public function getArrayRuoloDipendente(){
 
           $query=$this->_db->getQuery(true);
-          $query->select('r.ruolo, d.cognome, d.id as id, r.id as ruolo_id');
+          $query->select('r.ruolo, d.cognome, d.id as id, r.id as ruolo_id, d.valore_orario as valore_orario');
           $query->from('u3kon_gg_dipendenti as d');
           $query->join('left','u3kon_gg_map_dip_ruolo as m on d.id=m.id_dipendente');
           $query->join('left','u3kon_gg_ruoli as r on r.id=m.id_ruolo');
