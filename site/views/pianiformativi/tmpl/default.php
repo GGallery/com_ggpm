@@ -4,53 +4,58 @@ defined('_JEXEC') or die;
 
 
 <head>
-<style>
-    .insertbox{
+    <style>
+        .insertbox{
 
-        background-color: #d9edf7;
+            background-color: #d9edf7;
 
-    }
+        }
 
-    #calendario td{
+        .festivo{
 
-    font-size: xx-small;
-    padding: 0px;
-    }
+            background-color:red;
+        }
 
-    #tasks td{
+        #calendario td{
 
-        font-size: xx-small;
-        padding: 0px;
-    }
-    .start_hidden_input,.confirm_button, .confirm_budget_button{
+            font-size: xx-small;
+            padding: 0px;
+        }
 
-        display: none;
-    }
+        #tasks td{
 
-    .red{
+            font-size: xx-small;
+            padding: 0px;
+        }
+        .start_hidden_input,.confirm_button, .confirm_budget_button{
 
-        color:red;
-    }
+            display: none;
+        }
 
-    .descrizione_piano_attivo{
+        .red{
 
-        padding-left: 12px;
-        font-size: larger;
+            color:red;
+        }
 
-    }
+        .descrizione_piano_attivo{
 
-    .background-green{
+            padding-left: 12px;
+            font-size: larger;
 
-        background-color: #67b168;
-    }
+        }
 
-    .background-cyan{
+        .background-green{
 
-        background-color: #5bc0de;
-    }
+            background-color: #67b168;
+        }
+
+        .background-cyan{
+
+            background-color: #5bc0de;
+        }
 
 
-</style>
+    </style>
 </head>
 
 
@@ -75,14 +80,14 @@ defined('_JEXEC') or die;
                     <td class="col-3"><span id="span_piano_data_fine_<?php echo $pianoformativo['id']; ?>"><?php echo Date('d/m/Y',strtotime($pianoformativo['data_fine']))?></span>
                         <input id="input_piano_data_fine_<?php echo $pianoformativo['id']; ?>" class="start_hidden_input form-control form-control-sm" type="date" value="<?php echo $pianoformativo['data_fine']; ?>"></td>
 
-                <td class="col-3">
-                    <button><span class="modify_button oi oi-pencil" title="modifica piano formativo" aria-hidden="true" id="<?php echo $pianoformativo['id']; ?>"></span></button>
-                    <button class="confirm_button" id="confirm_button_<?php echo $pianoformativo['id']; ?>">
-                        <span class="oi oi-thumb-up" title="conferma modifiche" aria-hidden="true" id="confirm_span_<?php echo $pianoformativo['id']; ?>"></span></button>
-                    <button onclick="deletepianoclick(<?php echo $pianoformativo['id']; ?>)"><span class="oi oi-delete red" title="cancella piano formativo" aria-hidden="true"></span></button>
+                    <td class="col-3">
+                        <button><span class="modify_button oi oi-pencil" title="modifica piano formativo" aria-hidden="true" id="<?php echo $pianoformativo['id']; ?>"></span></button>
+                        <button class="confirm_button" id="confirm_button_<?php echo $pianoformativo['id']; ?>">
+                            <span class="oi oi-thumb-up" title="conferma modifiche" aria-hidden="true" id="confirm_span_<?php echo $pianoformativo['id']; ?>"></span></button>
+                        <button onclick="deletepianoclick(<?php echo $pianoformativo['id']; ?>)"><span class="oi oi-delete red" title="cancella piano formativo" aria-hidden="true"></span></button>
 
-                </td>
-                <?php }?>
+                    </td>
+                    <?php }?>
                 </tr>
                 </tbody>
             </table>
@@ -121,7 +126,7 @@ defined('_JEXEC') or die;
                     <select id="piano_formativo">
                         <option value="0">scegli</option>
                         <?php foreach ($this->piani_formativi as $pianoformativo){
-                        echo '<option value='.$pianoformativo['id'].'>'.$pianoformativo['descrizione'].'</option>';
+                            echo '<option value='.$pianoformativo['id'].'>'.$pianoformativo['descrizione'].'</option>';
                         }?>
                     </select>
                 </td>
@@ -130,7 +135,7 @@ defined('_JEXEC') or die;
         </table>
     </div>
     <div class="row justify-content-between">
-            <?php if($this->id_piano_formativo_attivo){?>
+        <?php if($this->id_piano_formativo_attivo){?>
             <div class="col-6">
                 <table class="table table-bordered table-striped">
                     <thead><th class="col-12 d-flex">GESTIONE BUDGET <span class="red descrizione_piano_attivo"><?php echo $this->descrizione_piano_formativo_attivo ?></span></th></thead>
@@ -138,19 +143,19 @@ defined('_JEXEC') or die;
                     <?php if($this->budget!=null){
 
                         foreach ($this->budget as $item){ $this->totale=$this->totale+$item['budget'];?>
-                        <tr class="d-flex"><td class="col-6"><?php echo $item['voce_costo']?></td>
-                            <td class="col-2">
-                                <span class="start_span" id="span_budget_budget_<?php echo $item['id']?>"><?php echo $item['budget']?></span>
+                            <tr class="d-flex"><td class="col-6"><?php echo $item['voce_costo']?></td>
+                                <td class="col-2">
+                                    <span class="start_span" id="span_budget_budget_<?php echo $item['id']?>"><?php echo $item['budget']?></span>
                                     <input id="input_budget_budget_<?php echo $item['id']?>" class="start_hidden_input form-control form-control-sm" type="text" value="<?php echo $item['budget']?>"></td>
-                                        <td class="col-4">
-                                            <button><span class="modify_budget_button oi oi-pencil" title="modifica" aria-hidden="true" id="<?php echo $item['id']; ?>"></span></button>
-                                            <button class="confirm_budget_button" id="confirm_button_<?php echo $item['id']; ?>">
-                                                <span class="oi oi-thumb-up" title="conferma modifiche" aria-hidden="true" id="budget_confirm_span_<?php echo $item['id']; ?>"></span></button>
-                                            <button onclick="deletebudgetclick(<?php echo $item['id']; ?>)"><span class="oi oi-delete red" title="cancella piano formativo" aria-hidden="true"></span></button>
+                                <td class="col-4">
+                                    <button><span class="modify_budget_button oi oi-pencil" title="modifica" aria-hidden="true" id="<?php echo $item['id']; ?>"></span></button>
+                                    <button class="confirm_budget_button" id="confirm_button_<?php echo $item['id']; ?>">
+                                        <span class="oi oi-thumb-up" title="conferma modifiche" aria-hidden="true" id="budget_confirm_span_<?php echo $item['id']; ?>"></span></button>
+                                    <button onclick="deletebudgetclick(<?php echo $item['id']; ?>)"><span class="oi oi-delete red" title="cancella piano formativo" aria-hidden="true"></span></button>
 
-                                        </td>
+                                </td>
 
-                        </tr>
+                            </tr>
                         <?php }
                     } ?>
                     <tr class="d-flex"><td class="col-6"> TOTALE BUDGET </td><td class="col-6"><?php echo  $this->totale?></td></tr>
@@ -176,21 +181,21 @@ defined('_JEXEC') or die;
                     </tbody>
                 </table>
             </div>
-            <?php }?>
-            <div class="col-6">
-                 <div class="row ">
-                     <div class="col-6 border border-primary rounded">CRUSCOTTO DIPENDENTI</div>
-                     <div class="row">
-                     <div class="col-6">dipendente</div><div class="col-3">ore residue</div><div class="col-3">budget residuo</div>
-                     <div class="col-6">topolino</div><div class="col-3">1020</div><div class="col-3">20.0000</div>
-                     <div class="col-6">pippo</div><div class="col-3">1040</div><div class="col-3">30.000</div>
-                     <div class="col-6">petruzzella</div><div class="col-3">124</div><div class="col-3">2.050</div>
-                     </div>
-                 </div>
-             </div>
-         </div>
+        <?php }?>
+        <div class="col-6">
+            <div class="row ">
+                <div class="col-6 border border-primary rounded">CRUSCOTTO DIPENDENTI</div>
+                <div class="row">
+                    <div class="col-6">dipendente</div><div class="col-3">ore residue</div><div class="col-3">budget residuo</div>
+                    <div class="col-6">topolino</div><div class="col-3">1020</div><div class="col-3">20.0000</div>
+                    <div class="col-6">pippo</div><div class="col-3">1040</div><div class="col-3">30.000</div>
+                    <div class="col-6">petruzzella</div><div class="col-3">124</div><div class="col-3">2.050</div>
+                </div>
+            </div>
+        </div>
+    </div>
     <?php if($this->id_piano_formativo_attivo){?>
-    <div class="row">
+        <div class="row">
             <div class="col-12">
                 <table class="table table-bordered">
                     <thead>
@@ -243,9 +248,9 @@ defined('_JEXEC') or die;
                             </select>
                         </td>
                         <td class="col-4">
-                        <select class="form-control form-control-sm" type="text" id="task_dipendente">
-                            <option>scegli un dipendente</option>
-                        </select>
+                            <select class="form-control form-control-sm" type="text" id="task_dipendente">
+                                <option>scegli un dipendente</option>
+                            </select>
                         </td>
                         <td class="col-4">
                             <select class="form-control form-control-sm" type="text" id="task_task_propedeutico">
@@ -271,7 +276,7 @@ defined('_JEXEC') or die;
                 </table>
             </div>
         </div>
-        <?php }?>
+    <?php }?>
 
 
 
@@ -280,27 +285,27 @@ defined('_JEXEC') or die;
 
 
 
-   <div class="row">
-       <div class="col-2" style="padding-right: 0px;">
-           <table class="table table-bordered" id="tasks">
-               <thead>
-               <tr class="d-flex"><th class="col-12"> task</th></tr>
+    <div class="row">
+        <div class="col-2" style="padding-right: 0px;">
+            <table class="table table-bordered" id="tasks">
+                <thead>
+                <tr class="d-flex"><th class="col-12"> task</th></tr>
 
-               <tr class="d-flex"><th class="col-12">&nbsp</th></tr>
-               <tr class="d-flex"><td>&nbsp</td></tr>
-               </thead>
-               <tbody>
-               <?php
-               if(isset($this->task[0])) {
-                   foreach ($this->task[0] as $item) {
-                       echo '<tr class=\"d-flex\"><td>' . $item['descrizione'] . '</td></tr>';
-                   }
-               }?>
-               </tbody>
-           </table>
+                <tr class="d-flex"><th class="col-12">&nbsp</th></tr>
+                <tr class="d-flex"><td>&nbsp</td></tr>
+                </thead>
+                <tbody>
+                <?php
+                if(isset($this->task[0])) {
+                    foreach ($this->task[0] as $item) {
+                        echo '<tr class=\"d-flex\"><td>' . $item['descrizione'] . '</td></tr>';
+                    }
+                }?>
+                </tbody>
+            </table>
 
-       </div>
-       <div class="col-10 table-responsive" style="padding-left: 0px; padding-left: 0px;">
+        </div>
+        <div class="col-10 table-responsive" style="padding-left: 0px; padding-left: 0px;">
 
             <table class="table table-bordered" id="calendario">
                 <thead>
@@ -312,25 +317,32 @@ defined('_JEXEC') or die;
                     $dimensioni_pixel_giorno=20;
                     $totale_giorni_progetto=0;
                     if($this->calendario_piano_formativo) {
-                        foreach ($this->calendario_piano_formativo as $mese) {
+                        foreach ($this->calendario_piano_formativo[0] as $mese) {
                             $giorni_mese = $this->mesi[intval(date_format($mese, 'm'))][1];
                             $nome_mese = $this->mesi[intval(date_format($mese, 'm'))][0];
                             $totale_giorni_progetto = $totale_giorni_progetto + $giorni_mese; ?>
                             <th style="width: <?php echo $giorni_mese * $dimensioni_pixel_giorno; ?>px;"><?php echo $nome_mese; ?></th>
                         <?php }
                     }?>
-                       <tr  class="d-flex">
+                <tr  class="d-flex">
                     <?php
                     if($this->calendario_piano_formativo) {
-                        foreach ($this->calendario_piano_formativo as $mese_) {
+                        $index=0;
+                        foreach ($this->calendario_piano_formativo[0] as $mese_) {
+
                             $giorni_mese = $this->mesi[intval(date_format($mese_, 'm'))][1];
                             for ($giorno = 1; $giorno < $giorni_mese + 1; $giorno++) {
-
-                                echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px;">' . $giorno . '</td>';
+                                if(isset($this->calendario_piano_formativo[1][$index]['w'])) {
+                                    $festivo_feriale = ($this->calendario_piano_formativo[1][$index]['w'] == 6 || $this->calendario_piano_formativo[1][$index]['w'] == 0 ? "festivo" : "feriale");
+                                }else{
+                                    $festivo_feriale =null;
+                                }
+                                echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px;" class="'.$festivo_feriale.'">' . $giorno . '</td>';
+                            $index++;
                             }
                         }
                     }?>
-                       </tr>
+                </tr>
 
                 </thead>
                 <tbody>
@@ -369,16 +381,16 @@ defined('_JEXEC') or die;
 
     ruoli_dipendenti=[
 
-    <?php if($this->array_ruolo_dipendente!=null){
+        <?php if($this->array_ruolo_dipendente!=null){
 
         foreach ($this->array_ruolo_dipendente as $item){
             echo "{ruolo:'".$item['ruolo_id']."',cognome:'".$item['cognome']."',id:'".$item['id']."',valore_orario:'".$item['valore_orario']."'},";
 
         }
     }
-    ?>
+        ?>
     ]
-   // console.log(ruoli_dipendenti.filter(x => x.ruolo === 'progettista'));
+    // console.log(ruoli_dipendenti.filter(x => x.ruolo === 'progettista'));
     var piano_formativo_attivo=<?php if($this->id_piano_formativo_attivo){ echo $this->id_piano_formativo_attivo; } else { echo "null";}?>;
 
 
@@ -392,9 +404,9 @@ defined('_JEXEC') or die;
 
     jQuery("#task_ruolo").change(function(){
 
-         var ruolo_scelto=jQuery("#task_ruolo").val();
+        var ruolo_scelto=jQuery("#task_ruolo").val();
         //console.log(ruolo_scelto);
-         jQuery("#task_dipendente option").remove();
+        jQuery("#task_dipendente option").remove();
         var dipendenti_da_caricare=ruoli_dipendenti.filter(x => x.ruolo == ruolo_scelto);
         //console.log(dipendenti_da_caricare);
         for (i=0; i<dipendenti_da_caricare.length; i++){

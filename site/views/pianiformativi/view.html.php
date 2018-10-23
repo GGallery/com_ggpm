@@ -63,14 +63,34 @@ class ggpmViewPianiformativi extends JViewLegacy {
 
     private function createCalendario($data_inizio,$data_fine){
 
-          $array_to_return=[];
-          $data_corrente=$data_inizio;
-          array_push($array_to_return,clone $data_inizio);//AGGIUNGE IL PRIMO MESE
-          while($data_corrente<$data_fine){
-              $nuova= clone date_add($data_corrente,date_interval_create_from_date_string("1 month"));
-              array_push($array_to_return,$nuova);
-          }
-          return $array_to_return;
+        $array_dei_mesi=[];
+        $array_dei_giorni=[];
+        $giorno_corrente_=[];
+        $anno_inizio=$data_inizio->format('Y');
+        $mese_inizio=$data_inizio->format('m');
+        $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
+
+        $data_corrente=clone $data_inizio;
+        $data_corrente_=clone $data_inizio;
+        array_push($array_dei_mesi,clone $data_inizio);//AGGIUNGE IL PRIMO MESE
+        $giorno_corrente_['data']=clone $data_corrente_;
+        $giorno_corrente_['w']=$data_corrente_->format('w');
+        array_push($array_dei_giorni,$giorno_corrente_);
+        while($data_corrente<$data_fine){
+            $mese__corrente= clone date_add($data_corrente,date_interval_create_from_date_string("1 month"));
+            array_push($array_dei_mesi,$mese__corrente);
+        }
+
+        while($data_corrente_<$data_fine){
+
+            $giorno_corrente_['data']=clone date_add($data_corrente_,date_interval_create_from_date_string("1 day"));
+            $giorno_corrente_['w']=$data_corrente_->format('w');
+            array_push($array_dei_giorni,$giorno_corrente_);
+
+        }
+
+        //var_dump($array_dei_giorni);die;
+        return [$array_dei_mesi,$array_dei_giorni];
 
     }
 }
