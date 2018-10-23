@@ -16,6 +16,12 @@ defined('_JEXEC') or die;
     font-size: xx-small;
     padding: 0px;
     }
+
+    #tasks td{
+
+        font-size: xx-small;
+        padding: 0px;
+    }
     .start_hidden_input,.confirm_button, .confirm_budget_button{
 
         display: none;
@@ -244,8 +250,8 @@ defined('_JEXEC') or die;
                         <td class="col-4">
                             <select class="form-control form-control-sm" type="text" id="task_task_propedeutico">
                                 <option>scegli un task propedeutico</option>
-                                <?php if($this->task!=null) {
-                                    foreach ($this->task as $item) {
+                                <?php if($this->task[0]!=null) {
+                                    foreach ($this->task[0] as $item) {
 
                                         echo '<option value=' . $item['id'] . '>' . $item['descrizione'] . '</option>';
                                     }
@@ -267,28 +273,93 @@ defined('_JEXEC') or die;
         </div>
         <?php }?>
 
-   <div class="table-responsive">
-
-        <table class="table table-bordered" id="calendario">
-            <thead>
-            <tr class="d-flex"><th class="col-12"> CALENDARIO</th></tr>
-            <tr class="d-flex"><th class="col-2">mese precedente</th><th class="col-8">primo mese</th><th class="col-2">mese successivo</th></tr>
-                   <tr  class="d-flex">
-                       <?php for($i=1;$i<32;$i++){
-
-                            echo '<td style="width: 3%">'.$i.'</td>';
-                       }?>
-                   </tr>
-            </thead>
-            <tbody>
-            <tr  class="d-flex"><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
 
 
-            </tbody>
-        </table>
 
+
+
+
+
+   <div class="row">
+       <div class="col-2" style="padding-right: 0px;">
+           <table class="table table-bordered" id="tasks">
+               <thead>
+               <tr class="d-flex"><th class="col-12"> task</th></tr>
+
+               <tr class="d-flex"><th class="col-12">&nbsp</th></tr>
+               <tr class="d-flex"><td>&nbsp</td></tr>
+               </thead>
+               <tbody>
+               <?php
+               if(isset($this->task[0])) {
+                   foreach ($this->task[0] as $item) {
+                       echo '<tr class=\"d-flex\"><td>' . $item['descrizione'] . '</td></tr>';
+                   }
+               }?>
+               </tbody>
+           </table>
+
+       </div>
+       <div class="col-10 table-responsive" style="padding-left: 0px; padding-left: 0px;">
+
+            <table class="table table-bordered" id="calendario">
+                <thead>
+                <tr class="d-flex"><th class="col-12"> CALENDARIO</th></tr>
+
+                <tr class="d-flex">
+
+                    <?php
+                    $dimensioni_pixel_giorno=20;
+                    $totale_giorni_progetto=0;
+                    if($this->calendario_piano_formativo) {
+                        foreach ($this->calendario_piano_formativo as $mese) {
+                            $giorni_mese = $this->mesi[intval(date_format($mese, 'm'))][1];
+                            $nome_mese = $this->mesi[intval(date_format($mese, 'm'))][0];
+                            $totale_giorni_progetto = $totale_giorni_progetto + $giorni_mese; ?>
+                            <th style="width: <?php echo $giorni_mese * $dimensioni_pixel_giorno; ?>px;"><?php echo $nome_mese; ?></th>
+                        <?php }
+                    }?>
+                       <tr  class="d-flex">
+                    <?php
+                    if($this->calendario_piano_formativo) {
+                        foreach ($this->calendario_piano_formativo as $mese_) {
+                            $giorni_mese = $this->mesi[intval(date_format($mese_, 'm'))][1];
+                            for ($giorno = 1; $giorno < $giorni_mese + 1; $giorno++) {
+
+                                echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px;">' . $giorno . '</td>';
+                            }
+                        }
+                    }?>
+                       </tr>
+
+                </thead>
+                <tbody>
+                <?php
+                if(isset($this->task[3]))
+                    $dayoftasks=$this->task[3];
+                $tasknumber=0;
+                if(isset($this->task[0])) {
+                    foreach ($this->task[0] as $item) {
+
+                        echo '<tr class="d-flex">';
+
+                        for ($i = 1; $i < $totale_giorni_progetto + 1; $i++) {
+                            if (isset($dayoftasks[$tasknumber][$i])) {
+                                $colore_del_giorno = $dayoftasks[$tasknumber][$i];
+                            } else {
+                                $colore_del_giorno = 'none';
+                            }
+                            echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px; background-color:' . $colore_del_giorno . '">' . $i . '</td>';
+                        }
+                        echo '</tr>';
+                        $tasknumber++;
+                    }
+                }?>
+                </tbody>
+            </table>
+
+        </div>
     </div>
-
 </div>
 
 
@@ -350,8 +421,6 @@ defined('_JEXEC') or die;
     });
 
 
-
-
     jQuery("#task_task_propedeutico").change(function(){
 
         var id_task_propedeutico=jQuery("#task_task_propedeutico").val();
@@ -364,30 +433,19 @@ defined('_JEXEC') or die;
         }).done(function(data) {
 
             //console.log(data)
-            //console.log(JSON.parse(data))
+            console.log(JSON.parse(data))
             //console.log(JSON.parse(data)[0].data_inizio);
-            var data_to_set=new Date(JSON.parse(data)[0].data_inizio);
-            console.log(data_to_set)
-            data_to_set.setDate(data_to_set.getDate()+parseInt(JSON.parse(data)[0].durata));
-            console.log(data_to_set)
+            var data_to_set=new Date(JSON.parse(data)[0][0].data_fine);
             var mese_to_set=("0"+(data_to_set.getMonth()+1)).toString().slice(-2)
-
             if(data_to_set.getDate().toString().length===1) {
                 var giorno_to_set = ("0" + (data_to_set.getDate().toString()).slice(-2))
             }else{
                 var giorno_to_set = data_to_set.getDate().toString()
             }
-
             jQuery("#task_data_inizio").val(data_to_set.getFullYear()+"-"+mese_to_set+"-"+giorno_to_set);
 
         });
     })
-
-
-
-
-
-
 
 
     function update_data_fine() {
@@ -403,8 +461,6 @@ defined('_JEXEC') or die;
             jQuery("#task_data_fine_calcolata").html(data_fine.getDate().toString()+"/"+(data_fine.getMonth()+1).toString()+"/"+data_fine.getFullYear());
 
         }
-
-
 
     }
 

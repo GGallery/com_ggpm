@@ -73,24 +73,73 @@ class ggpmModelTask  extends JModelLegacy {
         return $result;
     }
 
-    public function getTask($id=null, $id_piano_formativo){
+    public function getTask($id=null, $id_piano_formativo)
+    {
 
-        $query=$this->_db->getQuery(true);
-        $query->select('*');
-        $query->from('u3kon_gg_task');
+        $query = $this->_db->getQuery(true);
+        $query->select('task.* ,DATE_ADD(data_inizio,INTERVAL durata DAY) as \'data_fine\'');
+        $query->from('u3kon_gg_task as task');
 
-        if($id!=null)
-            $query->where('id='.$id);
-        if($id_piano_formativo!=null)
-            $query->where('id_piano_formativo='.$id_piano_formativo);
+        if ($id != null)
+            $query->where('id=' . $id);
+        if ($id_piano_formativo != null)
+            $query->where('id_piano_formativo=' . $id_piano_formativo);
         $query->order('data_inizio ASC');
         $this->_db->setQuery($query);
 
-        $task=$this->_db->loadAssocList();
+        $task = $this->_db->loadAssocList();
+        if (count($task) > 0) {
 
-        return $task;
-      }
+            $data_minore = min(array_column($task, 'data_inizio'));
+            $data_maggiore = max(array_column($task, 'data_fine'));
 
+            $daysoftasks = $this->createDaysoftasks($task, $data_minore, $data_maggiore);
+
+            return [$task, $data_minore, $data_maggiore, $daysoftasks];
+        }else{
+
+            return null;
+        }
+
+    }
+    public function createDaysoftasks($task,$data_inizio,$data_fine){
+
+        $anno_inizio=date_create($data_inizio)->format('Y');
+        $mese_inizio=date_create($data_inizio)->format('m');
+        $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
+        $data_fine=date_create($data_fine);
+        $colori=['#008000','#FF0000','	#0000FF','#008000','#FF0000','	#0000FF','#008000','#FF0000','#0000FF'];
+        $taskrows=[];
+        $colorindex=0;
+        foreach ($task as $item){
+            $colorindex++;
+            $rowtask=[];
+            $giorno_progetto=1;
+            $data_corrente=clone $data_inizio;
+
+            if(date_create($item['data_inizio'])<=$data_inizio && date_create($item['data_fine'])>=$data_inizio) {
+                $rowtask[$giorno_progetto]=$colori[$colorindex];
+
+            }else{
+                $rowtask[$giorno_progetto]='none';
+            }
+            $giorno_progetto++;
+            while($data_corrente<=$data_fine){
+
+                $nuova= clone date_add($data_corrente,date_interval_create_from_date_string("1 day"));
+                // var_dump($item['data_inizio']);var_dump($nuova);
+                if(date_create($item['data_inizio'])<=$nuova && date_create($item['data_fine'])>=$nuova) {
+                    $rowtask[$giorno_progetto]=$colori[$colorindex];
+
+                }else{
+                    $rowtask[$giorno_progetto]='none';
+                }
+                $giorno_progetto++;
+            }
+            array_push($taskrows,$rowtask);
+        }
+        return $taskrows;
+    }
 
 }
 
