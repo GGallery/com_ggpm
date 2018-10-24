@@ -105,6 +105,23 @@ class ggpmModelDipendenti  extends JModelLegacy {
           return $result;
 
       }
+
+      public function getCruscottodipendenti(){
+
+          $query=$this->_db->getQuery(true);
+          $query->select('d.cognome, sum(t.ore*t.valore_orario) as budget_impegnato, monte_ore-sum(t.ore) as ore_impegnate');
+          $query->from('u3kon_gg_dipendenti as d');
+          $query->join('inner','u3kon_gg_task as t on t.id_dipendente=d.id');
+          $query->group('d.id');
+          $this->_db->setQuery($query);
+          $result=$this->_db->loadAssocList();
+
+
+
+          return $result;
+
+
+      }
 }
 
 

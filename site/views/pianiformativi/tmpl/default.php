@@ -183,15 +183,17 @@ defined('_JEXEC') or die;
             </div>
         <?php }?>
         <div class="col-6">
-            <div class="row ">
-                <div class="col-6 border border-primary rounded">CRUSCOTTO DIPENDENTI</div>
-                <div class="row">
-                    <div class="col-6">dipendente</div><div class="col-3">ore residue</div><div class="col-3">budget residuo</div>
-                    <div class="col-6">topolino</div><div class="col-3">1020</div><div class="col-3">20.0000</div>
-                    <div class="col-6">pippo</div><div class="col-3">1040</div><div class="col-3">30.000</div>
-                    <div class="col-6">petruzzella</div><div class="col-3">124</div><div class="col-3">2.050</div>
-                </div>
-            </div>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr><th class="col-12 d-flex">CRUSCOTTO DIPENDENTI</th></tr>
+                    <tr><th class="col-6">dipendente</th><th class="col-3">ore residue</th><th class="col-3">budget impegnato</th></tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($this->cruscottodipendenti as $dipendente){
+                    echo '<tr><td class="col-6">'.$dipendente['cognome'].'</td><td class="col-3">'.$dipendente['ore_impegnate'].'</td><td class="col-3">'.$dipendente['budget_impegnato'].' €</td></tr>';
+                    }?>
+                </tbody>
+            </table>
         </div>
     </div>
     <?php if($this->id_piano_formativo_attivo){?>
@@ -298,7 +300,7 @@ defined('_JEXEC') or die;
                 <?php
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
-                        echo '<tr class=\"d-flex\"><td>' . $item['descrizione'] . '</td></tr>';
+                        echo '<tr class=\"d-flex\"><td>' . $item['descrizione'] . '-'.$item['cognome'].'</td></tr>';
                     }
                 }?>
                 </tbody>
@@ -331,9 +333,9 @@ defined('_JEXEC') or die;
                         foreach ($this->calendario_piano_formativo[0] as $mese_) {
 
                             $giorni_mese = $this->mesi[intval(date_format($mese_, 'm'))][1];
-                            for ($giorno = 1; $giorno < $giorni_mese + 1; $giorno++) {
-                                if(isset($this->calendario_piano_formativo[1][$index]['w'])) {
-                                    $festivo_feriale = ($this->calendario_piano_formativo[1][$index]['w'] == 6 || $this->calendario_piano_formativo[1][$index]['w'] == 0 ? "festivo" : "feriale");
+                            for ($giorno = 1; $giorno < $giorni_mese+1 ; $giorno++) {
+                                if(isset($this->calendario_piano_formativo[1][$index]['f'])) {
+                                       $festivo_feriale = ($this->calendario_piano_formativo[1][$index]['f'] == 1 ? "festivo" : "feriale");
                                 }else{
                                     $festivo_feriale =null;
                                 }
@@ -355,7 +357,7 @@ defined('_JEXEC') or die;
 
                         echo '<tr class="d-flex">';
 
-                        for ($i = 1; $i < $totale_giorni_progetto + 1; $i++) {
+                        for ($i = 1; $i < $totale_giorni_progetto+1; $i++) {
                             if (isset($dayoftasks[$tasknumber][$i])) {
                                 $colore_del_giorno = $dayoftasks[$tasknumber][$i];
                             } else {
@@ -409,6 +411,7 @@ defined('_JEXEC') or die;
         jQuery("#task_dipendente option").remove();
         var dipendenti_da_caricare=ruoli_dipendenti.filter(x => x.ruolo == ruolo_scelto);
         //console.log(dipendenti_da_caricare);
+        jQuery("#task_dipendente").append("<option value='0'>scegli "+jQuery("#task_ruolo option:selected").text()+"</option>");
         for (i=0; i<dipendenti_da_caricare.length; i++){
 
             jQuery("#task_dipendente").append("<option value="+dipendenti_da_caricare[i]['id']+">"+dipendenti_da_caricare[i]['cognome']+"</option>");
@@ -416,8 +419,19 @@ defined('_JEXEC') or die;
     });
 
     jQuery("#task_dipendente").change(function(){
+        var valore_orario=null;
+        var id_dipendente= jQuery("#task_dipendente").val();
+        jQuery.ajax({
+            method: "POST",
+            cache: false,
+            url: 'index.php?option=com_ggpm&task=dipendenti.getdipendentevaloreorario&id='+id_dipendente
 
-        jQuery("#task_valore_orario").html()
+        }).done(function(data) {
+
+            valore_orario=JSON.parse(data);
+            jQuery("#task_valore_orario").val(valore_orario);
+        });
+
     });
 
 

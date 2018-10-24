@@ -77,8 +77,9 @@ class ggpmModelTask  extends JModelLegacy {
     {
 
         $query = $this->_db->getQuery(true);
-        $query->select('task.* ,DATE_ADD(data_inizio,INTERVAL durata DAY) as \'data_fine\'');
+        $query->select('task.* ,DATE_ADD(data_inizio,INTERVAL durata DAY) as \'data_fine\', d.cognome as cognome');
         $query->from('u3kon_gg_task as task');
+        $query->join('inner','u3kon_gg_dipendenti as d on task.id_dipendente=d.id');
 
         if ($id != null)
             $query->where('id=' . $id);
@@ -141,6 +142,36 @@ class ggpmModelTask  extends JModelLegacy {
         return $taskrows;
     }
 
+    public function isFestivo($giorno){
+
+        /*$query = $this->_db->getQuery(true);
+        $query->select('data');
+        $query->from('u3kon_gg_date_festivita');
+        $query->where('data=\'1900-'.$giorno->format('m').'-'.$giorno->format('d').'\'');
+        $this->_db->setQuery($query);
+        $isFestivo = count($this->_db->loadAssocList());
+        return $isFestivo;*/
+
+        $festivitas=['01-01','01-06','04-25','05-01','06-02','08-15','11-01','12-08','12-25','12-26'];
+        $pasquettas=['2019-04-22','2020-04-13','2021-04-05','2022-04-18','2023-04-10','2024-04-01','2025-04-21'];
+        foreach ($festivitas as $festivita){
+
+            if ($giorno->format('m-d')==$festivita){
+                return 1;
+            }
+        }
+        foreach ($pasquettas as $pasquetta){
+
+            if ($giorno->format('Y-m-d')==$pasquetta){
+                return 1;
+            }
+        }
+        if($giorno->format('w')==6 || $giorno->format('w')==0){
+
+            return 1;
+        }
+        return 0;
+    }
 }
 
 

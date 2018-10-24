@@ -69,4 +69,15 @@ class ggpmControllerDipendenti extends JControllerLegacy
 
     }
 
+    public function getdipendentevaloreorario(){
+
+        $model=new ggpmModelDipendenti();
+        $dipendente=$model->getDipendenti($this->_filterparam->id);
+
+        echo $dipendente[0]['valore_orario'];
+        $this->_app->close();
+
+
+    }
+
 }
