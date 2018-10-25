@@ -113,6 +113,7 @@ class ggpmModelDipendenti  extends JModelLegacy {
           $query->from('u3kon_gg_dipendenti as d');
           $query->join('inner','u3kon_gg_task as t on t.id_dipendente=d.id');
           $query->group('d.id');
+          //echo $query;die;
           $this->_db->setQuery($query);
           $result=$this->_db->loadAssocList();
 
@@ -122,6 +123,8 @@ class ggpmModelDipendenti  extends JModelLegacy {
 
 
       }
+
+
 }
 
 

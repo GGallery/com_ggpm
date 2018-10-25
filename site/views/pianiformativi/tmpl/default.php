@@ -58,7 +58,7 @@ defined('_JEXEC') or die;
     </style>
 </head>
 
-
+<body>
 <div class="container">
     <div class="row  background-green">
 
@@ -280,13 +280,6 @@ defined('_JEXEC') or die;
         </div>
     <?php }?>
 
-
-
-
-
-
-
-
     <div class="row">
         <div class="col-2" style="padding-right: 0px;">
             <table class="table table-bordered" id="tasks">
@@ -375,9 +368,31 @@ defined('_JEXEC') or die;
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Date in conflitto per il dipendente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body container-fluid">
 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 <script type="text/javascript">
+
+
+
 
     var durata;
     var ruoli_dipendenti=[];
@@ -501,6 +516,7 @@ defined('_JEXEC') or die;
                 data_fine.setDate(data_fine.getDate()+parseInt(durata))
 
                 jQuery("#task_data_fine_calcolata").html(data_fine.getDate().toString()+"/"+(data_fine.getMonth()+1).toString()+"/"+data_fine.getFullYear());
+                verificacaricodipendente(id_dipendente,data_inizio,data_fine.getFullYear().toString()+"-"+(data_fine.getMonth()+1).toString()+"-"+data_fine.getDate().toString());
 
 
             });
@@ -510,6 +526,31 @@ defined('_JEXEC') or die;
 
     }
 
+    function verificacaricodipendente(id_dipendente,data_inizio,data_fine){
+
+        jQuery.ajax({
+            method: "POST",
+            cache: false,
+            url: 'index.php?option=com_ggpm&task=task.verificacaricodipendente&id_dipendente='+id_dipendente+'&data_inizio='+data_inizio+'&data_fine='+data_fine
+
+        }).done(function(data) {
+
+            console.log(JSON.parse(data));
+            var sovrapposizioni=JSON.parse(data);
+            var scritta="";
+            jQuery(".modal-body").empty();
+            if(sovrapposizioni.length>0) {
+                jQuery(".modal-body").append("<table class=\"table table-bordered table-striped\"><thead><tr class=\"d-flex\"><th class=\"col-6 \"> PIANO FORMATIVO</th><th class=\"col-6\">TASK</th></tr></thead><tbody>");
+                for (i = 0; i < sovrapposizioni.length; i++) {
+                    jQuery(".modal-body table").append("<tr class=\"d-flex\"><td class='col-6'><b>" + sovrapposizioni[i].descrizione_piano + "</b></td><td class='col-6'><b>" + sovrapposizioni[i].descrizione + "</b></td></tr>")
+                }
+                jQuery(".modal-body").append("</tbody></table>");
+                jQuery("#exampleModal").modal('show');
+            }
+
+        });
+
+    }
 
     function insertpianoclick(){
 

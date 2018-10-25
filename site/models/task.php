@@ -73,18 +73,21 @@ class ggpmModelTask  extends JModelLegacy {
         return $result;
     }
 
-    public function getTask($id=null, $id_piano_formativo)
+    public function getTask($id=null, $id_piano_formativo,$id_dipendente=null)
     {
 
         $query = $this->_db->getQuery(true);
-        $query->select('task.* ,DATE_ADD(data_inizio,INTERVAL durata DAY) as \'data_fine\', d.cognome as cognome');
+        $query->select('task.* ,DATE_ADD(task.data_inizio,INTERVAL task.durata DAY) as \'data_fine\', d.cognome as cognome, p.descrizione as descrizione_piano');
         $query->from('u3kon_gg_task as task');
         $query->join('inner','u3kon_gg_dipendenti as d on task.id_dipendente=d.id');
+        $query->join('inner','u3kon_gg_piani_formativi as p on p.id=task.id_piano_formativo');
 
         if ($id != null)
-            $query->where('id=' . $id);
+            $query->where('task.id=' . $id);
         if ($id_piano_formativo != null)
-            $query->where('id_piano_formativo=' . $id_piano_formativo);
+            $query->where('task.id_piano_formativo=' . $id_piano_formativo);
+        if ($id_dipendente!=null)
+           $query->where('task.id_dipendente='.$id_dipendente);
         $query->order('data_inizio ASC');
         $this->_db->setQuery($query);
 
@@ -212,6 +215,26 @@ class ggpmModelTask  extends JModelLegacy {
             $result=1;
 
         return $result;
+    }
+
+    public function verificaCaricodipendente($id_dipendente, $data_inizio,$data_fine){
+
+        $data_inizio=date_create($data_inizio);
+        $data_fine=date_create($data_fine);
+        $tasks_dipendente=$this->getTask(null,null,$id_dipendente)[0];
+
+        $elenco_task_concorrenti=[];
+        foreach ($tasks_dipendente as $task){
+
+            if (
+                (date_create($task['data_inizio'])>=$data_inizio && date_create($task['data_inizio'])<=$data_fine) || //se il task preso in considerazione inizia all'interno del nuovo task
+                (date_create($task['data_fine'])>=$data_inizio && date_create($task['data_fine'])<=$data_fine) || // se il task preso in considerazione finisce all'interno del nuovo task
+                ((date_create($task['data_inizio'])<=$data_inizio) && date_create($task['data_fine'])>=$data_fine) //se il task preso in considerazione inizia prima e finisce dopo del nuovo task
+            ){
+                array_push($elenco_task_concorrenti,$task);
+            }
+        }
+        return $elenco_task_concorrenti;
     }
 }
 
