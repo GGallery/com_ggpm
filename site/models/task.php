@@ -172,6 +172,47 @@ class ggpmModelTask  extends JModelLegacy {
         }
         return 0;
     }
+
+    public function gestioneGiornidaaggiungere($data_inizio,$durata,$id_dipendente){
+
+        $data_inizio_calcolo_ferie=date_create($data_inizio);
+        $durata_aggiornata=$durata;
+        $durata_aggiornata_dopoferie=$durata_aggiornata;
+        if ($this->isFerieoFestivo($data_inizio_calcolo_ferie,$id_dipendente))
+
+            $durata_aggiornata++;
+
+        for ($giorno=1; $giorno<$durata_aggiornata;$giorno++) {
+            if ($this->isFerieoFestivo(date_add($data_inizio_calcolo_ferie, date_interval_create_from_date_string("1 day")),$id_dipendente)) {
+
+                $durata_aggiornata++;
+            }
+        }
+
+        return $durata_aggiornata;
+    }
+
+    private function isFerie($giorno,$id_dipendente){
+
+        $query = $this->_db->getQuery(true);
+        $query->select('count(*)');
+        $query->from('u3kon_gg_assenze_dipendente');
+        $query->where('data_inizio<=\''.$giorno->format('Y').'-'.$giorno->format('m').'-'.$giorno->format('d').'\'
+        and data_fine>=\''.$giorno->format('Y').'-'.$giorno->format('m').'-'.$giorno->format('d').'\'
+        and id_dipendente='.$id_dipendente);
+        $this->_db->setQuery($query);
+        $isFerie = $this->_db->loadResult();
+        //var_dump($giorno);var_dump($isFerie);
+        return $isFerie;
+    }
+
+    private function isFerieoFestivo($giorno,$id_dipendente){
+        $result=0;
+        if($this->isFestivo($giorno) || $this->isFerie($giorno,$id_dipendente))
+            $result=1;
+
+        return $result;
+    }
 }
 
 

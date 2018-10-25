@@ -379,6 +379,7 @@ defined('_JEXEC') or die;
 
 <script type="text/javascript">
 
+    var durata;
     var ruoli_dipendenti=[];
 
     ruoli_dipendenti=[
@@ -479,12 +480,31 @@ defined('_JEXEC') or die;
         if(jQuery("#task_data_inizio").val().length>0 && !isNaN(parseInt(jQuery("#task_durata").val()))){
             //var data_inizio=new Date();
             //console.log(data_inizio);
-            var giorni_da_aggiungere=jQuery("#task_durata").val();
+            var data_inizio=new Date(jQuery("#task_data_inizio").val());
+            data_inizio=data_inizio.getFullYear()+"-"+(data_inizio.getMonth()+1)+"-"+data_inizio.getDate();
+            var giorni_da_aggiungere_=jQuery("#task_durata").val();
+            var giorni_da_aggiungere=0;
+            var id_dipendente= jQuery("#task_dipendente").val();
             console.log(giorni_da_aggiungere);
-            var data_fine=new Date(jQuery("#task_data_inizio").val());
-            data_fine.setDate(data_fine.getDate()+parseInt(giorni_da_aggiungere))
-            console.log(data_fine);
-            jQuery("#task_data_fine_calcolata").html(data_fine.getDate().toString()+"/"+(data_fine.getMonth()+1).toString()+"/"+data_fine.getFullYear());
+            jQuery.ajax({
+                method: "POST",
+                cache: false,
+                url: 'index.php?option=com_ggpm&task=task.gestionegiornidaaggiungere&data_inizio='+data_inizio+'&durata='+giorni_da_aggiungere_+'&id_dipendente='+id_dipendente
+
+            }).done(function(data) {
+
+
+                giorni_da_aggiungere=JSON.parse(data);
+
+                durata=giorni_da_aggiungere-1;
+                var data_fine=new Date(jQuery("#task_data_inizio").val());
+                data_fine.setDate(data_fine.getDate()+parseInt(durata))
+
+                jQuery("#task_data_fine_calcolata").html(data_fine.getDate().toString()+"/"+(data_fine.getMonth()+1).toString()+"/"+data_fine.getFullYear());
+
+
+            });
+
 
         }
 
@@ -536,7 +556,7 @@ defined('_JEXEC') or die;
         var id_piano_formativo=piano_formativo_attivo;
         var descrizione=jQuery("#task_descrizione").val();
         var data_inizio=jQuery("#task_data_inizio").val();
-        var durata=jQuery("#task_durata").val();
+        //var durata=jQuery("#task_durata").val();
         var ore=jQuery("#task_ore").val();
         var id_voce_costo=jQuery("#task_voce_costo").val();
         var id_ruolo=jQuery("#task_ruolo").val();

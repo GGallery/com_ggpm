@@ -85,4 +85,11 @@ class ggpmControllerTask extends JControllerLegacy
 
     }
 
+    public function gestionegiornidaaggiungere(){
+
+        $model=new ggpmModelTask();
+        echo json_encode($model->gestioneGiornidaaggiungere($this->_filterparam->data_inizio,$this->_filterparam->durata,$this->_filterparam->id_dipendente));
+        $this->_app->close();
+
+    }
 }
