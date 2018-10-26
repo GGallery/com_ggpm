@@ -147,7 +147,7 @@ class ggpmModelDipendenti  extends JModelLegacy {
             $data_corrente=clone $data_inizio;
             while($data_corrente<=$data_fine){
 
-                if($id_dipendente==18){var_dump($data_corrente);}
+
                 if(!$model->isFestivo($data_corrente)){
                     $giorni_di_ferie++;
                 }

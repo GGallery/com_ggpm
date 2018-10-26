@@ -272,8 +272,11 @@ defined('_JEXEC') or die;
                         <td class="col-4">valore orario
                             <input class="form-control form-control-sm" type="text" id="task_valore_orario">
                         </td>
-                        <td class="col-8"> <button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewtask" value="conferma" onclick="inserttaskclick()" type="button">CONFERMA</button></td>
+                        <td class="col-8" id="piano_ferie_dipendente">
+                            piano ferie dipendente selezionato
+                        </td>
                     </tr>
+                    <tr class="d-flex"><td class="col-12"> <button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewtask" value="conferma" onclick="inserttaskclick()" type="button">CONFERMA</button></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -446,6 +449,21 @@ defined('_JEXEC') or die;
 
             valore_orario=JSON.parse(data);
             jQuery("#task_valore_orario").val(valore_orario);
+            jQuery.ajax({
+                method: "POST",
+                cache: false,
+                url: 'index.php?option=com_ggpm&task=assenze.getassenze&id_dipendente='+id_dipendente
+
+            }).done(function(data_) {
+                jQuery("#piano_ferie_dipendente").empty();
+                var ferie=JSON.parse(data_);
+                console.log(ferie[0].assenze);
+                ferie=ferie[0].assenze;
+                for (k=0;k<ferie.length;k++){
+
+                    jQuery("#piano_ferie_dipendente").append("<div>"+ferie[k]['data_inizio']+" - "+ferie[k]['data_fine']+"</div>")
+                }
+            });
         });
 
     });
@@ -512,6 +530,8 @@ defined('_JEXEC') or die;
                 giorni_da_aggiungere=JSON.parse(data);
 
                 durata=giorni_da_aggiungere-1;
+                var diff=giorni_da_aggiungere-giorni_da_aggiungere_;
+                if (diff>0){alert('attenzione, aggiunti '+diff.toString()+' giorni per ferie o festività')}
                 var data_fine=new Date(jQuery("#task_data_inizio").val());
                 data_fine.setDate(data_fine.getDate()+parseInt(durata))
 

@@ -60,5 +60,12 @@ class ggpmControllerAssenze extends JControllerLegacy
 
     }
 
+    public function getassenze(){
+
+        $model=new ggpmModelAssenze();
+        echo json_encode($model->getAssenze($this->_filterparam->id_dipendente));
+        $this->_app->close();
+    }
+
 
 }
