@@ -197,7 +197,7 @@ class ggpmModelTask  extends JModelLegacy {
         return $durata_aggiornata;
     }
 
-    private function isFerie($giorno,$id_dipendente){
+    public function isFerie($giorno,$id_dipendente){
 
         $query = $this->_db->getQuery(true);
         $query->select('count(*)');

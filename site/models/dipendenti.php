@@ -5,6 +5,8 @@
  * Date: 04/05/2017
  * Time: 17:03
  */
+
+require_once JPATH_COMPONENT . '/models/task.php';
 class ggpmModelDipendenti  extends JModelLegacy {
 
     protected $_db;
@@ -85,45 +87,75 @@ class ggpmModelDipendenti  extends JModelLegacy {
 
 
         return $dipendenti;
-      }
+    }
 
-      public function getArrayRuoloDipendente(){
+    public function getArrayRuoloDipendente(){
 
-          $query=$this->_db->getQuery(true);
-          $query->select('r.ruolo, d.cognome, d.id as id, r.id as ruolo_id, d.valore_orario as valore_orario');
-          $query->from('u3kon_gg_dipendenti as d');
-          $query->join('left','u3kon_gg_map_dip_ruolo as m on d.id=m.id_dipendente');
-          $query->join('left','u3kon_gg_ruoli as r on r.id=m.id_ruolo');
-
-
-          $this->_db->setQuery($query);
-
-          $result=$this->_db->loadAssocList();
+        $query=$this->_db->getQuery(true);
+        $query->select('r.ruolo, d.cognome, d.id as id, r.id as ruolo_id, d.valore_orario as valore_orario');
+        $query->from('u3kon_gg_dipendenti as d');
+        $query->join('left','u3kon_gg_map_dip_ruolo as m on d.id=m.id_dipendente');
+        $query->join('left','u3kon_gg_ruoli as r on r.id=m.id_ruolo');
 
 
+        $this->_db->setQuery($query);
 
-          return $result;
-
-      }
-
-      public function getCruscottodipendenti(){
-
-          $query=$this->_db->getQuery(true);
-          $query->select('d.cognome, sum(t.ore*t.valore_orario) as budget_impegnato, monte_ore-sum(t.ore) as ore_impegnate');
-          $query->from('u3kon_gg_dipendenti as d');
-          $query->join('inner','u3kon_gg_task as t on t.id_dipendente=d.id');
-          $query->group('d.id');
-          //echo $query;die;
-          $this->_db->setQuery($query);
-          $result=$this->_db->loadAssocList();
+        $result=$this->_db->loadAssocList();
 
 
 
-          return $result;
+        return $result;
+
+    }
+
+    public function getCruscottodipendenti(){
+
+        $query=$this->_db->getQuery(true);
+        $query->select('d.id, d.cognome, sum(t.ore*t.valore_orario) as budget_impegnato, d.monte_ore as monte_ore, sum(t.ore) as ore_impegnate');
+        $query->from('u3kon_gg_dipendenti as d');
+        $query->join('inner','u3kon_gg_task as t on t.id_dipendente=d.id');
+        $query->group('d.id');
+        //echo $query;die;
+        $this->_db->setQuery($query);
+        $result=$this->_db->loadAssocList();
+        foreach ($result as &$dipendente){
+
+            $dipendente['ore_ferie']=$this->calcola_ore_ferie($dipendente['id']);
+            $dipendente['ore_residue']=$dipendente['monte_ore']-$dipendente['ore_impegnate']-$dipendente['ore_ferie'];
+        }
 
 
-      }
+        return $result;
 
+
+    }
+
+    private function calcola_ore_ferie($id_dipendente){
+
+        $model=new ggpmModeltask();
+        $query=$this->_db->getQuery(true);
+        $query->select('data_inizio, data_fine');
+        $query->from('u3kon_gg_assenze_dipendente');
+        $query->where('id_dipendente='.$id_dipendente);
+        //echo $query;die;
+        $this->_db->setQuery($query);
+        $result=$this->_db->loadAssocList();
+        $giorni_di_ferie=0;
+        foreach ($result as $feria){
+            $data_inizio=date_create($feria['data_inizio']);
+            $data_fine=date_create($feria['data_fine']);
+            $data_corrente=clone $data_inizio;
+            while($data_corrente<=$data_fine){
+
+                if($id_dipendente==18){var_dump($data_corrente);}
+                if(!$model->isFestivo($data_corrente)){
+                    $giorni_di_ferie++;
+                }
+                date_add($data_corrente,date_interval_create_from_date_string("1 day"));
+            }
+        }
+        return $giorni_di_ferie*8;
+    }
 
 }
 

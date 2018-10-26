@@ -33,9 +33,8 @@ class ggpmViewAssenze extends JViewLegacy {
         JHtml::_('stylesheet', 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous');
         $this->_filterparam = new stdClass();
         $this->_filterparam->id_dipendente=JRequest::getVar('id_dipendente');
-        $this->assenze=$this->getModel()->getAssenze($this->_filterparam->id_dipendente);
-        $modelDipendente=new ggpmModelDipendenti();
-        $this->dipendenti=$modelDipendente->getDipendenti($this->_filterparam->id_dipendente);
+        $this->assenze = $this->getModel()->getAssenze($this->_filterparam->id_dipendente);
+
         parent::display($tpl);
     }
 }

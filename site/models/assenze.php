@@ -48,7 +48,7 @@ class ggpmModelAssenze  extends JModelLegacy {
 
 
 
-    public function getAssenze($id_dipendente){
+    public function getAssenze_($id_dipendente=null){
 
             $query_=$this->_db->getQuery(true);
             $query_->select('a.data_inizio as data_inizio,a.data_fine as data_fine, a.causale as causale');
@@ -59,11 +59,13 @@ class ggpmModelAssenze  extends JModelLegacy {
             return $assenze;
     }
 
-    public function getAssenzeAll(){
+    public function getAssenze($id_dipendente=null){
 
         $query=$this->_db->getQuery(true);
         $query->select('*');
         $query->from('u3kon_gg_dipendenti');
+        if($id_dipendente!=null)
+            $query->where('id='.$id_dipendente);
         $this->_db->setQuery($query);
 
         $dipendenti=$this->_db->loadAssocList();
@@ -71,7 +73,7 @@ class ggpmModelAssenze  extends JModelLegacy {
         foreach ($dipendenti as &$dipendente) {
 
             $query_=$this->_db->getQuery(true);
-            $query_->select('a.data as data, a.causale as causale');
+            $query_->select('a.id as id, a.data_inizio as data_inizio,a.data_fine as data_fine, a.causale as causale');
             $query_->from('u3kon_gg_assenze_dipendente as a');
             $query_->where('a.id_dipendente='.$dipendente['id']);
             $this->_db->setQuery($query_);

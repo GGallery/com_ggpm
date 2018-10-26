@@ -173,7 +173,7 @@ defined('_JEXEC') or die;
                         </td>
                         <td class="col-4"><input class="form-control form-control-sm" type="text" id="budget_budget"></td>
                     </tr>
-                    <tr class="d-flex insertbox">
+                    <tr  insertbox">
                         <td class="col-12"> <button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewbudget" value="conferma" onclick="insertbudgetclick()" type="button">CONFERMA</button></td>
 
                     </tr>
@@ -185,12 +185,12 @@ defined('_JEXEC') or die;
         <div class="col-6">
             <table class="table table-bordered table-striped">
                 <thead>
-                    <tr><th class="col-12 d-flex">CRUSCOTTO DIPENDENTI</th></tr>
-                    <tr><th class="col-6">dipendente</th><th class="col-3">ore residue</th><th class="col-3">budget impegnato</th></tr>
+                    <tr class="d-flex"><th class="col-12">CRUSCOTTO DIPENDENTI</th></tr>
+                    <tr class="d-flex"><th class="col-3">dipendente</th><th class="col-2">ore impegnate</th><th class="col-2">ore ferie</th><th class="col-2">ore residue</th><th class="col-3">budget impegnato</th></tr>
                 </thead>
                 <tbody>
                     <?php foreach ($this->cruscottodipendenti as $dipendente){
-                    echo '<tr><td class="col-6">'.$dipendente['cognome'].'</td><td class="col-3">'.$dipendente['ore_impegnate'].'</td><td class="col-3">'.$dipendente['budget_impegnato'].' €</td></tr>';
+                    echo '<tr class="d-flex"><td class="col-3">'.$dipendente['cognome'].'</td><td class="col-2">'.$dipendente['ore_impegnate'].'</td><td class="col-2">'.$dipendente['ore_ferie'].'</td><td class="col-2">'.$dipendente['ore_residue'].'</td><td class="col-3">'.$dipendente['budget_impegnato'].' €</td></tr>';
                     }?>
                 </tbody>
             </table>

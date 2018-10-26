@@ -63,52 +63,59 @@ defined('_JEXEC') or die;
 
 <div class="table-responsive">
     <h2>FOR - GESTIONE PIANI FORMATIVI - ASSENZE DIPENDENTI</h2>
-    <table class="table table-striped table-bordered ">
-        <thead>
-        <tr>
-            <th>COGNOME</th>
-            <th>NOME</th>
-            <th>VALORE ORARIO</th>
 
-        </tr>
-        </thead>
-
-        <tbody>
 
         <?php
-        foreach ($this->dipendenti as $dipendente) {
+        foreach ($this->assenze as $dipendente) {
 
             ?>
+            <table class="table table-striped table-bordered ">
+                <thead>
                 <tr>
-                    <td class="cognome"><span class="start_span" id="span_cognome_<?php echo $dipendente['id']; ?>"><?php echo $dipendente['cognome']; ?></span></td>
+                    <th>COGNOME</th>
+                    <th>NOME</th>
+                    <th>VALORE ORARIO</th>
+
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr>
+                    <td class="cognome"><span class="start_span" id="span_cognome_<?php echo $dipendente['id']; ?>"><a href="index.php/assenze?id_dipendente=<?php echo $dipendente['id']; ?>"><?php echo $dipendente['cognome']; ?></a></span></td>
                     <td class="nome"><span class="start_span" id="span_nome_<?php echo $dipendente['id']; ?>"><?php echo $dipendente['nome']; ?></span></td>
                     <td class="valore_orario"><span class="start_span" id="span_valore_orario_<?php echo $dipendente['id']; ?>"><?php echo $dipendente['valore_orario']; ?></span></td>
                 </tr>
+                <tr>
+                    <table class="table table-striped table-bordered ">
+                        <thead>
+                        <tr>
+                            <th>DATE </th>
+                            <th>CAUSALE</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($dipendente['assenze'] as $assenza){?>
+                            <tr>
+                                <td class="data"><span class="start_span" id="span_cognome"><?php echo Date('d/m/Y',strtotime($assenza['data_inizio'])).' - '.Date('d/m/Y',strtotime($assenza['data_fine']));?></span></td>
+                                <td class="causale"><span class="start_span" id="span_nome"><?php echo $assenza['causale']; ?></span>
+                                    <button onclick="deleteclick(<?php echo $assenza['id']; ?>)"><span class="oi oi-delete red" title="cancella assenza" aria-hidden="true"></span></button></td>
+                            </tr>
+                        <?php }?>
+                        </tbody>
+                    </table>
+                </tr>
                 <?php
+
             }
         ?>
         </tbody>
     </table>
-    <table class="table table-striped table-bordered ">
-        <thead>
-        <tr>
-            <th>DATE </th>
-            <th>CAUSALE</th>
-        </tr>
-        </thead>
-        <tbody>
-             <?php foreach ($this->assenze as $assenza){?>
-             <tr>
-                 <td class="data"><span class="start_span" id="span_cognome"><?php echo Date('d/m/Y',strtotime($assenza['data_inizio'])).' - '.Date('d/m/Y',strtotime($assenza['data_fine']));?></span></td>
-                 <td class="causale"><span class="start_span" id="span_nome"><?php echo $assenza['causale']; ?></span></td>
-             </tr>
-             <?php }?>
-        </tbody>
-    </table>
+
 </div>
 
 
 <div class="form-group form-group-sm">
+    <?php if($this->_filterparam->id_dipendente!=null){?>
     <div  class="row insertbox"><div class="col-xs-12 col-md-12"><b>INSERISCI UNA NUOVA ASSENZA</b></div></div>
 
     <div  class="row insertbox">
@@ -132,6 +139,7 @@ defined('_JEXEC') or die;
         <div class="col-xs-12 col-md-4 text-center"><button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewassenza" value="conferma" onclick="insertclick()" type="button">CONFERMA</button>
         </div><div class="col-xs-0 col-md-4"></div>
     </div>
+    <?php } ?>
 </div>
 
 <script type="text/javascript">
@@ -165,11 +173,11 @@ defined('_JEXEC') or die;
 
     function deleteclick(id) {
 
-        if(confirm('attenzione, stai cancellando un utente')==true) {
+        if(confirm('attenzione, stai cancellando una assenza')==true) {
             jQuery.ajax({
                 method: "POST",
                 cache: false,
-                url: 'index.php?option=com_ggpm&task=dipendenti.delete&id=' + id.toString()
+                url: 'index.php?option=com_ggpm&task=assenze.delete&id=' + id.toString()
 
             }).done(function () {
 

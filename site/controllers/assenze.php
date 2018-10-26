@@ -27,6 +27,7 @@ class ggpmControllerAssenze extends JControllerLegacy
         parent::__construct($config);
         $this->_app = JFactory::getApplication();
         $this->_filterparam = new stdClass();
+        $this->_filterparam->id=JRequest::getVar('id');
         $this->_filterparam->id_dipendente=JRequest::getVar('id_dipendente');
         $this->_filterparam->data_inizio=JRequest::getVar('data_inizio');
         $this->_filterparam->data_fine=JRequest::getVar('data_fine');
