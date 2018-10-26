@@ -287,13 +287,13 @@ defined('_JEXEC') or die;
                 <tr class="d-flex"><th class="col-12"> task</th></tr>
 
                 <tr class="d-flex"><th class="col-12">&nbsp</th></tr>
-                <tr class="d-flex"><td>&nbsp</td></tr>
+                <tr class="d-flex"><td style="height: 15px;">&nbsp</td></tr>
                 </thead>
                 <tbody>
-                <?php
+                <?php //COLONNA DEI TASK
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
-                        echo '<tr class=\"d-flex\"><td>' . $item['descrizione'] . '-'.$item['cognome'].'</td></tr>';
+                        echo '<tr class=\"d-flex\"><td style="height: 15px;">' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' €</td></tr>';
                     }
                 }?>
                 </tbody>
@@ -308,7 +308,7 @@ defined('_JEXEC') or die;
 
                 <tr class="d-flex">
 
-                    <?php
+                    <?php //RIGA DEI MESI
                     $dimensioni_pixel_giorno=20;
                     $totale_giorni_progetto=0;
                     if($this->calendario_piano_formativo) {
@@ -320,7 +320,7 @@ defined('_JEXEC') or die;
                         <?php }
                     }?>
                 <tr  class="d-flex">
-                    <?php
+                    <?php //RIGA DEI GIORNI
                     if($this->calendario_piano_formativo) {
                         $index=0;
                         foreach ($this->calendario_piano_formativo[0] as $mese_) {
@@ -341,7 +341,7 @@ defined('_JEXEC') or die;
 
                 </thead>
                 <tbody>
-                <?php
+                <?php //RIGHE DEI TASK
                 if(isset($this->task[3]))
                     $dayoftasks=$this->task[3];
                 $tasknumber=0;
@@ -356,7 +356,7 @@ defined('_JEXEC') or die;
                             } else {
                                 $colore_del_giorno = 'none';
                             }
-                            echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px; background-color:' . $colore_del_giorno . '">' . $i . '</td>';
+                            echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px; height: 15px; background-color:' . $colore_del_giorno . '">' . $i . '</td>';
                         }
                         echo '</tr>';
                         $tasknumber++;

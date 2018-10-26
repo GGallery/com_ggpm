@@ -62,6 +62,8 @@ class ggpmModelBudget  extends JModelLegacy {
         $query->from('u3kon_gg_budget as b');
         $query->join('inner','u3kon_gg_piani_formativi as p on b.id_piano_formativo=p.id');
         $query->join('inner','u3kon_gg_voci_costo as c on b.id_voce_costo=c.id');
+
+
         if($id!=null)
             $query->where('id='.$id);
         if($id_piano_formativo!=null)

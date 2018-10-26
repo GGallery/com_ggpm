@@ -77,7 +77,7 @@ class ggpmModelTask  extends JModelLegacy {
     {
 
         $query = $this->_db->getQuery(true);
-        $query->select('task.* ,DATE_ADD(task.data_inizio,INTERVAL task.durata DAY) as \'data_fine\', d.cognome as cognome, p.descrizione as descrizione_piano');
+        $query->select('task.* ,DATE_ADD(task.data_inizio,INTERVAL task.durata DAY) as \'data_fine\', d.cognome as cognome, p.descrizione as descrizione_piano, task.ore*task.valore_orario as task_budget');
         $query->from('u3kon_gg_task as task');
         $query->join('inner','u3kon_gg_dipendenti as d on task.id_dipendente=d.id');
         $query->join('inner','u3kon_gg_piani_formativi as p on p.id=task.id_piano_formativo');
@@ -112,11 +112,13 @@ class ggpmModelTask  extends JModelLegacy {
         $mese_inizio=date_create($data_inizio)->format('m');
         $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
         $data_fine=date_create($data_fine);
-        $colori=['#008000','#FF0000','	#0000FF','#008000','#FF0000','	#0000FF','#008000','#FF0000','#0000FF'];
+        $colori=['#008000','#FF0000','	#0000FF'];
         $taskrows=[];
         $colorindex=0;
         foreach ($task as $item){
             $colorindex++;
+            if($colorindex>2)
+                $colorindex=0;
             $rowtask=[];
             $giorno_progetto=1;
             $data_corrente=clone $data_inizio;
