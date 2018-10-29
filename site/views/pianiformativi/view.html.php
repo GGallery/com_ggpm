@@ -24,7 +24,7 @@ require_once JPATH_COMPONENT . '/models/dipendenti.php';
 
 class ggpmViewPianiformativi extends JViewLegacy {
 
-    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale,$array_ruolo_dipendente,$calendario_piano_formativo,$mesi,$cruscottodipendenti;
+    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale,$budget_utilizzato,$array_ruolo_dipendente,$calendario_piano_formativo,$mesi,$cruscottodipendenti;
 
 
     function display($tpl = null)

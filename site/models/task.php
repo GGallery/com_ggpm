@@ -77,11 +77,12 @@ class ggpmModelTask  extends JModelLegacy {
     {
 
         $query = $this->_db->getQuery(true);
-        $query->select('task.* ,DATE_ADD(task.data_inizio,INTERVAL task.durata DAY) as \'data_fine\', d.cognome as cognome, p.descrizione as descrizione_piano, task.ore*task.valore_orario as task_budget');
+        $query->select('task.* ,DATE_ADD(task.data_inizio,INTERVAL task.durata DAY) as \'data_fine\', d.cognome as cognome, p.descrizione as descrizione_piano, task.ore*task.valore_orario as task_budget, f.descrizione as descrizione_fase, v.descrizione as descrizione_voce_costo');
         $query->from('u3kon_gg_task as task');
         $query->join('inner','u3kon_gg_dipendenti as d on task.id_dipendente=d.id');
         $query->join('inner','u3kon_gg_piani_formativi as p on p.id=task.id_piano_formativo');
-
+        $query->join('inner','u3kon_gg_voci_costo as v on v.id=task.id_voce_costo');
+        $query->join('inner','u3kon_gg_fasi as f on v.id_fase=f.id');
         if ($id != null)
             $query->where('task.id=' . $id);
         if ($id_piano_formativo != null)

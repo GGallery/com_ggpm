@@ -58,11 +58,12 @@ class ggpmModelBudget  extends JModelLegacy {
     public function getBudget($id=null,$id_piano_formativo=null){
 
         $query=$this->_db->getQuery(true);
-        $query->select('b.id as id, c.descrizione as voce_costo, p.descrizione as piano_formativo, b.budget as budget');
+        $query->select('b.id as id, c.id as id_voce_costo, c.descrizione as voce_costo, p.descrizione as piano_formativo, b.budget as budget, f.descrizione as descrizione_fase,
+        (select sum(ore*valore_orario) from u3kon_gg_task as t where t.id_piano_formativo=p.id and t.id_voce_costo=c.id) as totale_costo');
         $query->from('u3kon_gg_budget as b');
         $query->join('inner','u3kon_gg_piani_formativi as p on b.id_piano_formativo=p.id');
         $query->join('inner','u3kon_gg_voci_costo as c on b.id_voce_costo=c.id');
-
+        $query->join('inner','u3kon_gg_fasi as f on c.id_fase=f.id');
 
         if($id!=null)
             $query->where('id='.$id);
@@ -70,9 +71,7 @@ class ggpmModelBudget  extends JModelLegacy {
             $query->where('id_piano_formativo='.$id_piano_formativo);
 
         $this->_db->setQuery($query);
-
         $budget=$this->_db->loadAssocList();
-
         return $budget;
       }
 
