@@ -213,13 +213,14 @@ defined('_JEXEC') or die;
                     <tbody>
                     <tr class="d-flex">
                         <td class="col-4">descrizione
-                            <input class="form-control form-control-sm" type="text" id="task_descrizione">
+                            <input class="form-control form-control-sm" type="text" id="task_descrizione" value="<?php if(isset($this->task_to_modify)){echo $this->task_to_modify['descrizione'];}?>">
                         </td>
                         <td class="col-4">data inizio
-                            <input class="form-control form-control-sm" type="date" id="task_data_inizio">
+                            <input class="form-control form-control-sm" type="date" id="task_data_inizio" value="<?php if(isset($this->task_to_modify)){echo $this->task_to_modify['data_inizio'];}?>">
                         </td>
-                        <td class="col-4">durata in giorni
-                            <input class="form-control form-control-sm" type="text" id="task_durata">
+                        <td class="col-4">durata in giorni<br>
+                            <input class="" size="3" type="text" id="task_durata" value="<?php if(isset($this->task_to_modify)){echo $this->task_to_modify['durata'];}?>">
+                            <button id=""><span class="oi oi-reload" title="aggiorna data fine" aria-hidden="true" onclick="update_data_fine()"></span></button>
                         </td>
                     </tr>
                     <tr class="d-flex">
@@ -228,14 +229,20 @@ defined('_JEXEC') or die;
                         </td>
 
                         <td class="col-4">ore
-                            <input class="form-control form-control-sm" type="text" id="task_ore">
+                            <input class="form-control form-control-sm" type="text" id="task_ore" value="<?php if(isset($this->task_to_modify)){echo $this->task_to_modify['ore'];}?>">
                         </td>
                         <td class="col-4"><br>
                             <select class="form-control form-control-sm" id="task_voce_costo">
-                                <option>scegli una voce di costo</option>
+                                <option value=0>scegli una voce di costo</option>
                                 <?php foreach ($this->budget as $item){
+                                    $selected=null;
+                                    if(isset($this->task_to_modify)){
 
-                                    echo '<option value='.$item['id_voce_costo'].'>'.$item['voce_costo'].'</option>';
+                                        if($item['id_voce_costo']==$this->task_to_modify['id_voce_costo']){
+                                            $selected='selected';
+                                        }
+                                    }
+                                    echo '<option value='.$item['id_voce_costo'].' '.$selected.'>'.$item['voce_costo'].'</option>';
                                 }
 
                                 ?>
@@ -246,10 +253,16 @@ defined('_JEXEC') or die;
                     <tr class="d-flex">
                         <td class="col-4">
                             <select class="form-control form-control-sm" type="text" id="task_ruolo">
-                                <option>scegli un ruolo</option>
+                                <option value=0>scegli un ruolo</option>
                                 <?php foreach ($this->ruoli as $item){
+                                    $selected=null;
+                                    if(isset($this->task_to_modify)){
 
-                                    echo '<option value='.$item['id'].'>'.$item['ruolo'].'</option>';
+                                        if($item['id']==$this->task_to_modify['id_ruolo']){
+                                            $selected='selected';
+                                        }
+                                    }
+                                    echo '<option value='.$item['id'].' '.$selected.'>'.$item['ruolo'].'</option>';
                                 }
 
                                 ?>
@@ -258,16 +271,26 @@ defined('_JEXEC') or die;
                         </td>
                         <td class="col-4">
                             <select class="form-control form-control-sm" type="text" id="task_dipendente">
-                                <option>scegli un dipendente</option>
+                                <option value=0>scegli un dipendente</option>
+                                <?php if(isset($this->task_to_modify)){
+                                    echo '<option value='.$this->task_to_modify['id_dipendente'].' selected="selected">'.$this->task_to_modify['cognome'].'</option>';
+                                }
+                                ?>
                             </select>
                         </td>
                         <td class="col-4">
                             <select class="form-control form-control-sm" type="text" id="task_task_propedeutico">
-                                <option>scegli un task propedeutico</option>
+                                <option value=0>scegli un task propedeutico</option>
                                 <?php if($this->task[0]!=null) {
                                     foreach ($this->task[0] as $item) {
+                                        $selected=null;
+                                        if(isset($this->task_to_modify)){
 
-                                        echo '<option value=' . $item['id'] . '>' . $item['descrizione'] . '</option>';
+                                            if($item['id']==$this->task_to_modify['id_task_propedeutico']){
+                                                $selected='selected';
+                                            }
+                                        }
+                                        echo '<option value=' . $item['id'] .' '.$selected.'>' . $item['descrizione'] . '</option>';
                                     }
                                 }
                                 ?>
@@ -277,13 +300,13 @@ defined('_JEXEC') or die;
                     </tr>
                     <tr class="d-flex">
                         <td class="col-4">valore orario
-                            <input class="form-control form-control-sm" type="text" id="task_valore_orario">
+                            <input class="form-control form-control-sm" type="text" id="task_valore_orario"  value="<?php if(isset($this->task_to_modify)){echo $this->task_to_modify['valore_orario'];}?>">
                         </td>
                         <td class="col-8" id="piano_ferie_dipendente">
                             piano ferie dipendente selezionato
                         </td>
                     </tr>
-                    <tr class="d-flex"><td class="col-12"> <button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewtask" value="conferma" onclick="inserttaskclick()" type="button">CONFERMA</button></td></tr>
+                    <tr class="d-flex"><td class="col-12"> <button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewtask" value="conferma" onclick=<?php if(isset($this->task_to_modify)){echo '"modifytaskclick()"';}else{echo '"inserttaskclick()"';} ?> type="button">CONFERMA</button></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -303,7 +326,7 @@ defined('_JEXEC') or die;
                 <?php //COLONNA DEI TASK
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
-                        echo '<tr class=\"d-flex\" title="'.$item['descrizione_voce_costo'].'"><td style="height: 15px;">' . $item['descrizione_fase'] .'-' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' €</td></tr>';
+                        echo '<tr class=\"d-flex\" title="'.$item['descrizione_voce_costo'].'"><td style="height: 15px;"><a href=\'index.php?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='.$this->id_piano_formativo_attivo.'&id_task_to_modify='.$item['id'].'\'>' . $item['descrizione_fase'] .'-' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' €</a></td></tr>';
                     }
                 }?>
                 </tbody>
@@ -353,7 +376,7 @@ defined('_JEXEC') or die;
                 <tbody>
                 <?php //RIGHE DEI TASK
                 if(isset($this->task[3]))
-                    $dayoftasks=$this->task[3];
+                $dayoftasks=$this->task[3];
                 $tasknumber=0;
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
@@ -404,7 +427,7 @@ defined('_JEXEC') or die;
 
 
 
-    var durata;
+    var current_data_fine;
     var ruoli_dipendenti=[];
 
     ruoli_dipendenti=[
@@ -479,15 +502,12 @@ defined('_JEXEC') or die;
     });
 
 
-    jQuery("#task_durata").keyup(function(){
+    jQuery("#update_data_fine").click(function(){
 
 
         update_data_fine();
-    });
+        console.log(current_data_fine)
 
-    jQuery("#task_data_inizio").change(function(){
-
-        update_data_fine();
     });
 
 
@@ -503,22 +523,27 @@ defined('_JEXEC') or die;
         }).done(function(data) {
 
             //console.log(data)
-            console.log(JSON.parse(data))
+
             //console.log(JSON.parse(data)[0].data_inizio);
-            var data_to_set=new Date(JSON.parse(data)[0][0].data_fine);
-            var mese_to_set=("0"+(data_to_set.getMonth()+1)).toString().slice(-2)
-            if(data_to_set.getDate().toString().length===1) {
+            var data_to_set=new Date(JSON.parse(data)[0][0].data_fine); //prende dalla chiamata ajax il giorno conclusivo del task propedeutico
+            console.log(data_to_set);
+            data_to_set=new Date(data_to_set.setDate(data_to_set.getDate()+1)); //aggiunge alla data un giorno
+
+            var mese_to_set=("0"+(data_to_set.getMonth()+1)).toString().slice(-2); //gestisce lo 0 del mese
+            if(data_to_set.getDate().toString().length===1) {//la procedura seguente verifica e aggiunge lo 0 al giorno
                 var giorno_to_set = ("0" + (data_to_set.getDate().toString()).slice(-2))
             }else{
                 var giorno_to_set = data_to_set.getDate().toString()
             }
             jQuery("#task_data_inizio").val(data_to_set.getFullYear()+"-"+mese_to_set+"-"+giorno_to_set);
-
+            update_data_fine();
         });
     })
 
 
     function update_data_fine() {
+
+        var durata;
 
         if(jQuery("#task_data_inizio").val().length>0 && !isNaN(parseInt(jQuery("#task_durata").val()))){
             //var data_inizio=new Date();
@@ -528,7 +553,7 @@ defined('_JEXEC') or die;
             var giorni_da_aggiungere_=jQuery("#task_durata").val();
             var giorni_da_aggiungere=0;
             var id_dipendente= jQuery("#task_dipendente").val();
-            console.log(giorni_da_aggiungere);
+
             jQuery.ajax({
                 method: "POST",
                 cache: false,
@@ -548,7 +573,7 @@ defined('_JEXEC') or die;
                 jQuery("#task_data_fine_calcolata").html(data_fine.getDate().toString()+"/"+(data_fine.getMonth()+1).toString()+"/"+data_fine.getFullYear());
                 verificacaricodipendente(id_dipendente,data_inizio,data_fine.getFullYear().toString()+"-"+(data_fine.getMonth()+1).toString()+"-"+data_fine.getDate().toString());
 
-
+                current_data_fine=data_fine.getFullYear().toString()+"-"+(data_fine.getMonth()+1).toString()+"-"+data_fine.getDate().toString();
             });
 
 
@@ -624,16 +649,18 @@ defined('_JEXEC') or die;
 
     function inserttaskclick(){
 
+
+        if(input_task_verifica()==1){return;};
         var id_piano_formativo=piano_formativo_attivo;
         var descrizione=jQuery("#task_descrizione").val();
         var data_inizio=jQuery("#task_data_inizio").val();
-        //var durata=jQuery("#task_durata").val();
+        var data_fine=current_data_fine;
+        var durata=jQuery("#task_durata").val();
         var ore=jQuery("#task_ore").val();
         var id_voce_costo=jQuery("#task_voce_costo").val();
         var id_ruolo=jQuery("#task_ruolo").val();
         var id_dipendente=jQuery("#task_dipendente").val();
         var id_task_propedeutico=jQuery("#task_task_propedeutico").val();
-
         var valore_orario=jQuery("#task_valore_orario").val().replace(",",".");
 
         jQuery.ajax({
@@ -642,6 +669,7 @@ defined('_JEXEC') or die;
             url: 'index.php?option=com_ggpm&task=task.insert&id_piano_formativo='+id_piano_formativo
             +'&descrizione='+descrizione
             +'&data_inizio='+data_inizio
+            +'&data_fine='+data_fine
             +'&durata='+durata
             +'&ore='+ore
             +'&id_voce_costo='+id_voce_costo
@@ -660,6 +688,107 @@ defined('_JEXEC') or die;
 
         });
     }
+
+    function modifytaskclick(){
+
+        var id=<?php if(isset($this->task_to_modify)){echo $this->id_task_to_modify;}else{echo 0;}?>;
+        var id_piano_formativo=piano_formativo_attivo;
+        var descrizione=jQuery("#task_descrizione").val();
+        var data_inizio=jQuery("#task_data_inizio").val();
+        var data_fine=current_data_fine;
+        var durata=jQuery("#task_durata").val();
+        var ore=jQuery("#task_ore").val();
+        var id_voce_costo=jQuery("#task_voce_costo").val();
+        var id_ruolo=jQuery("#task_ruolo").val();
+        var id_dipendente=jQuery("#task_dipendente").val();
+        var id_task_propedeutico=jQuery("#task_task_propedeutico").val();
+        var valore_orario=jQuery("#task_valore_orario").val().replace(",",".");
+
+        jQuery.ajax({
+            method: "POST",
+            cache: false,
+            url: 'index.php?option=com_ggpm&task=task.modify&id_piano_formativo='+id_piano_formativo
+            +'&descrizione='+descrizione
+            +'&data_inizio='+data_inizio
+            +'&data_fine='+data_fine
+            +'&durata='+durata
+            +'&ore='+ore
+            +'&id_voce_costo='+id_voce_costo
+            +'&id_ruolo='+id_ruolo
+            +'&id_dipendente='+id_dipendente
+            +'&id_task_propedeutico='+id_task_propedeutico
+            +'&valore_orario='+valore_orario
+            +'&id='+id
+
+
+        }).done(function() {
+
+            alert("aggiornamento riuscito");
+            window.open('index.php/gestione-piani-formativi?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='+id_piano_formativo, '_self')
+
+
+        });
+    }
+
+
+    function input_task_verifica(){
+
+        var verifica=0;
+        if(jQuery("#task_descrizione").val().length==0){
+
+            alert ("descrizione mancante");
+            verifica=1;
+        }
+
+        if(jQuery("#task_data_inizio").val().length==0){
+
+            alert ("data inizio mancante");
+            verifica=1;
+        }
+
+        if(jQuery("#task_durata").val().length==0){
+
+            alert ("durata mancante");
+            verifica=1;
+        }
+
+        if(jQuery("#task_ore").val().length==0){
+
+            alert ("ore mancanti");
+            verifica=1;
+        }
+
+        console.log(jQuery("#task_voce_costo option:selected").val());
+
+        if(jQuery("#task_voce_costo option:selected").val()==0){
+
+            alert ("voce costo mancante");
+            verifica=1;
+        }
+
+        if(jQuery("#task_ruolo option:selected").val()==0){
+
+            alert ("ruolo mancante");
+            verifica=1;
+        }
+
+        if(jQuery("#task_dipendente option:selected").val()==0){
+
+            alert ("dipendente mancante");
+            verifica=1;
+        }
+
+        if(jQuery("#task_valore_orario").val().length==0){
+
+            alert ("valore orario mancante");
+            verifica=1;
+        }
+
+        return verifica;
+    }
+
+
+
 
     //questa funzione intercetta l'evento click sui pulsanti di modifica, e trasforma i campi testo della riga in campi input. Prima però riporta tutti a testo
     jQuery(".modify_button").click(function (event) {

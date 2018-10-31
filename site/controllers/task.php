@@ -44,7 +44,7 @@ class ggpmControllerTask extends JControllerLegacy
     public function insert(){
 
         $model=new ggpmModeltask();
-        if($model->insert($this->_filterparam->id_piano_formativo,$this->_filterparam->descrizione,$this->_filterparam->data_inizio,$this->_filterparam->durata,$this->_filterparam->ore,$this->_filterparam->id_voce_costo,$this->_filterparam->id_ruolo,
+        if($model->insert($this->_filterparam->id_piano_formativo,$this->_filterparam->descrizione,$this->_filterparam->data_inizio,$this->_filterparam->data_fine,$this->_filterparam->durata,$this->_filterparam->ore,$this->_filterparam->id_voce_costo,$this->_filterparam->id_ruolo,
                             $this->_filterparam->id_dipendente,$this->_filterparam->id_task_propedeutico,$this->_filterparam->valore_orario)) {
             echo "1";
         }else{
@@ -68,7 +68,8 @@ class ggpmControllerTask extends JControllerLegacy
     public function modify(){
 
         $model=new ggpmModelTask();
-        if($model->modify($this->_filterparam->id,$this->_filterparam->id_piano_formativo,$this->_filterparam->descrizione,$this->_filterparam->data_inizio,$this->_filterparam->durata,$this->_filterparam->id_voce_costo,$this->_filterparam->id_ruolo,
+        if($model->modify($this->_filterparam->id,$this->_filterparam->id_piano_formativo,$this->_filterparam->descrizione,$this->_filterparam->data_inizio,$this->_filterparam->data_fine,
+            $this->_filterparam->durata,$this->_filterparam->id_voce_costo,$this->_filterparam->ore,$this->_filterparam->id_ruolo,
                             $this->_filterparam->id_dipendente,$this->_filterparam->id_task_propedeutico,$this->_filterparam->valore_orario)) {
             echo "1";
         }else{

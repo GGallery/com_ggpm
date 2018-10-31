@@ -24,7 +24,7 @@ require_once JPATH_COMPONENT . '/models/dipendenti.php';
 
 class ggpmViewPianiformativi extends JViewLegacy {
 
-    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale,$budget_utilizzato,$array_ruolo_dipendente,$calendario_piano_formativo,$mesi,$cruscottodipendenti;
+    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale,$budget_utilizzato,$array_ruolo_dipendente,$calendario_piano_formativo,$mesi,$cruscottodipendenti,$id_task_to_modify,$task_to_modify;
 
 
     function display($tpl = null)
@@ -38,6 +38,7 @@ class ggpmViewPianiformativi extends JViewLegacy {
             ['settembre',30], ['ottobre',31], ['novembre',30],['dicembre',31]);
         $this->piani_formativi=$this->getModel()->getPianiformativi();
         $this->id_piano_formativo_attivo=JRequest::getVar('id_piano_formativo_attivo');
+        $this->id_task_to_modify=JRequest::getVar('id_task_to_modify');
         $this->budget=null;
         $vociModel=new ggpmModelVocicosto();
         $this->voci_costo=$vociModel->getVocicosto();
@@ -52,12 +53,19 @@ class ggpmViewPianiformativi extends JViewLegacy {
             $this->budget=$model->getBudget(null,$this->id_piano_formativo_attivo);
             $this->descrizione_piano_formativo_attivo=$this->getModel()->getPianiformativi($this->id_piano_formativo_attivo)[0]['descrizione'];
             $taskModel=new ggpmModelTask();
-            $this->task=$taskModel->getTask(null,$this->id_piano_formativo_attivo);
+            $this->task=$taskModel->getTask(null,$this->id_piano_formativo_attivo,null);
             $data_inizio=date_create($this->task[1]);
             $data_fine=date_create($this->task[2]);
             $this->calendario_piano_formativo=$this->createCalendario($data_inizio,$data_fine);
         }
 
+        if($this->id_task_to_modify!=null){
+
+            $taskModel=new ggpmModelTask();
+            $this->task_to_modify=$taskModel->getTask($this->id_task_to_modify,null,null)[0][0];
+            //var_dump($this->task_to_modify);die;
+
+        }
 
         parent::display($tpl);
     }

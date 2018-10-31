@@ -22,13 +22,14 @@ class ggpmModelTask  extends JModelLegacy {
 
     }
 
-    public function insert($id_piano_formativo,$descrizione,$data_inizio,$durata,$ore,$id_voce_costo,$id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario){
+    public function insert($id_piano_formativo,$descrizione,$data_inizio,$data_fine,$durata,$ore,$id_voce_costo,$id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario){
 
 
         $object = new StdClass;
         $object->id_piano_formativo=$id_piano_formativo;
         $object->descrizione=$descrizione;
         $object->data_inizio = $data_inizio;
+        $object->data_fine = $data_fine;
         $object->durata=$durata;
         $object->ore=$ore;
         $object->id_voce_costo=$id_voce_costo;
@@ -51,23 +52,26 @@ class ggpmModelTask  extends JModelLegacy {
         return $result;
     }
 
-    public function modify($id,$id_piano_formativo,$descrizione,$data_inizio,$durata,$id_voce_costo,$id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario){
+    public function modify($id,$id_piano_formativo,$descrizione,$data_inizio,$data_fine,$durata,$id_voce_costo,$ore, $id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario){
 
 
         $sql="update u3kon_gg_task 
-              set id_piano_formativo='".$id_piano_formativo."',
+              set id_piano_formativo=".$id_piano_formativo.",
                     descrizione='".$descrizione."', 
-                    id_piano_formativo='".$id_piano_formativo."',
+                    id_piano_formativo=".$id_piano_formativo.",
                     data_inizio='".$data_inizio."', 
-                    durata='".$durata."', 
-                    id_voce_costo='".$id_voce_costo."',
-                    id_ruolo='".$id_ruolo."',
-                    id_dipendente='".$id_dipendente."',
-                    id_task_propedeutico='".$id_task_propedeutico."',
+                    data_fine='".$data_fine."', 
+                    durata=".$durata.", 
+                    id_voce_costo=".$id_voce_costo.",
+                    ore=".$ore.",
+                    id_ruolo=".$id_ruolo.",
+                    id_dipendente=".$id_dipendente.",
+                    id_task_propedeutico=".$id_task_propedeutico.",
                     valore_orario='".$valore_orario."'
                     where id=".$id;
 
         $this->_db->setQuery($sql);
+
         $result=$this->_db->execute();
 
         return $result;
@@ -77,7 +81,9 @@ class ggpmModelTask  extends JModelLegacy {
     {
 
         $query = $this->_db->getQuery(true);
-        $query->select('task.* ,DATE_ADD(task.data_inizio,INTERVAL task.durata DAY) as \'data_fine\', d.cognome as cognome, p.descrizione as descrizione_piano, task.ore*task.valore_orario as task_budget, f.descrizione as descrizione_fase, v.descrizione as descrizione_voce_costo');
+        $query->select('task.* ,task.data_fine as data_fine, d.cognome as cognome, 
+                p.descrizione as descrizione_piano, task.ore*task.valore_orario as task_budget, f.descrizione as descrizione_fase, 
+                v.descrizione as descrizione_voce_costo, task.id_voce_costo as id_voce_costo, task.id_ruolo as id_ruolo, task.id_dipendente as id_dipendente, task.id_task_propedeutico as id_task_propedeutico');
         $query->from('u3kon_gg_task as task');
         $query->join('inner','u3kon_gg_dipendenti as d on task.id_dipendente=d.id');
         $query->join('inner','u3kon_gg_piani_formativi as p on p.id=task.id_piano_formativo');
@@ -113,7 +119,7 @@ class ggpmModelTask  extends JModelLegacy {
         $mese_inizio=date_create($data_inizio)->format('m');
         $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
         $data_fine=date_create($data_fine);
-        $colori=['#008000','#FF0000','	#0000FF'];
+        $colori=['#008000','#FF0000','#0000FF'];
         $taskrows=[];
         $colorindex=0;
         foreach ($task as $item){
