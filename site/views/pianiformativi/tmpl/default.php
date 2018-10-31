@@ -197,7 +197,7 @@ defined('_JEXEC') or die;
                 </thead>
                 <tbody>
                     <?php foreach ($this->cruscottodipendenti as $dipendente){
-                    echo '<tr class="d-flex"><td class="col-3">'.$dipendente['cognome'].'</td><td class="col-2">'.$dipendente['ore_impegnate'].'</td><td class="col-2">'.$dipendente['ore_ferie'].'</td><td class="col-2">'.$dipendente['ore_residue'].'</td><td class="col-3">'.$dipendente['budget_impegnato'].' €</td></tr>';
+                    echo '<tr class="d-flex"><td class="col-3">'.$dipendente['cognome'].'</td><td class="col-2">'.$dipendente['ore_impegnate'].'</td><td class="col-2">'.$dipendente['ore_ferie'].'</td><td id_dipendente_ore_residue='.$dipendente['id'].' ore_residue_dipendente='.$dipendente['ore_residue'].' class="col-2">'.$dipendente['ore_residue'].'</td><td class="col-3">'.$dipendente['budget_impegnato'].' €</td></tr>';
                     }?>
                 </tbody>
             </table>
@@ -221,6 +221,7 @@ defined('_JEXEC') or die;
                         <td class="col-4">durata in giorni<br>
                             <input class="" size="3" type="text" id="task_durata" value="<?php if(isset($this->task_to_modify)){echo $this->task_to_modify['durata'];}?>">
                             <button id=""><span class="oi oi-reload" title="aggiorna data fine" aria-hidden="true" onclick="update_data_fine()"></span></button>
+                            <button id=""><span class="oi oi-person" title="spalma ore" aria-hidden="true" onclick="spalma_ore()"></span></button>
                         </td>
                     </tr>
                     <tr class="d-flex">
@@ -506,7 +507,7 @@ defined('_JEXEC') or die;
 
 
         update_data_fine();
-        console.log(current_data_fine)
+
 
     });
 
@@ -539,6 +540,21 @@ defined('_JEXEC') or die;
             update_data_fine();
         });
     })
+
+
+    function spalma_ore() {
+
+        if(jQuery("#task_dipendente option:selected").val()==0){
+
+            alert ("dipendente non selezionato");
+            return;
+        }
+        var id_dipendente= jQuery("#task_dipendente").val();
+        var ore= jQuery("[id_dipendente_ore_residue='"+id_dipendente+"']").attr("ore_residue_dipendente");
+        jQuery("#task_durata").val(parseInt(ore/8));
+
+
+    }
 
 
     function update_data_fine() {
