@@ -24,7 +24,7 @@ require_once JPATH_COMPONENT . '/models/dipendenti.php';
 
 class ggpmViewPianiformativi extends JViewLegacy {
 
-    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale,$budget_utilizzato,$array_ruolo_dipendente,$calendario_piano_formativo,$mesi,$cruscottodipendenti,$id_task_to_modify,$task_to_modify;
+    public $piani_formativi, $id_piano_formativo_attivo, $budget,$descrizione_piano_formativo_attivo,$voci_costo,$totale,$budget_utilizzato,$array_ruolo_dipendente,$calendario_piano_formativo,$mesi,$cruscottodipendenti,$cruscottodipendentipiano,$id_task_to_modify,$task_to_modify;
 
 
     function display($tpl = null)
@@ -57,6 +57,7 @@ class ggpmViewPianiformativi extends JViewLegacy {
             $data_inizio=date_create($this->task[1]);
             $data_fine=date_create($this->task[2]);
             $this->calendario_piano_formativo=$this->createCalendario($data_inizio,$data_fine);
+            $this->cruscottodipendentipiano=$dipendentiModel->getCruscottodipendenti($this->id_piano_formativo_attivo);
         }
 
         if($this->id_task_to_modify!=null){

@@ -307,7 +307,14 @@ defined('_JEXEC') or die;
                             piano ferie dipendente selezionato
                         </td>
                     </tr>
-                    <tr class="d-flex"><td class="col-12"> <button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewtask" value="conferma" onclick=<?php if(isset($this->task_to_modify)){echo '"modifytaskclick()"';}else{echo '"inserttaskclick()"';} ?> type="button">CONFERMA</button></td></tr>
+                    <tr class="d-flex"><td class="col-12"> <button  class="form-control btn btn-outline-secondary btn-sm" id="insertnewtask" value="conferma" onclick=<?php if(isset($this->task_to_modify)){echo '"modifytaskclick()"';}else{echo '"inserttaskclick()"';} ?> type="button">CONFERMA</button>
+                            <?php if(isset($this->task_to_modify)){?>
+                                <p>
+                                <button  class="form-control btn btn-outline-secondary btn-sm red" id="deletetask" value="delete" onclick="elimina_task()" type="button">ELIMINA</button>'
+                                </p>
+                           <?php }  ?>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -746,7 +753,24 @@ defined('_JEXEC') or die;
         });
     }
 
+    function elimina_task(){
 
+        var id=<?php echo $this->id_task_to_modify;?>
+
+        jQuery.ajax({
+            method: "POST",
+            cache: false,
+            url: 'index.php?option=com_ggpm&task=task.delete&id='+id
+
+        }).done(function() {
+
+            alert("eliminazione riuscita");
+            location.reload();
+
+
+        });
+
+    }
     function input_task_verifica(){
 
         var verifica=0;

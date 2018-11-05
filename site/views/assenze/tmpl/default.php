@@ -147,7 +147,7 @@ defined('_JEXEC') or die;
 
     function insertclick(){
 
-        var id_dipendente=<?php echo $this->_filterparam->id_dipendente;?>;
+        var id_dipendente=<?php echo $this->_filterparam->id_dipendente;?>
 
         jQuery.ajax({
             method: "POST",
