@@ -197,7 +197,9 @@ defined('_JEXEC') or die;
                 </thead>
                 <tbody>
                     <?php foreach ($this->cruscottodipendenti as $dipendente){
-                    echo '<tr class="d-flex"><td class="col-3">'.$dipendente['cognome'].'</td><td class="col-2">'.$dipendente['ore_impegnate'].'</td><td class="col-2">'.$dipendente['ore_ferie'].'</td><td id_dipendente_ore_residue='.$dipendente['id'].' ore_residue_dipendente='.$dipendente['ore_residue'].' class="col-2">'.$dipendente['ore_residue'].'</td><td class="col-3">'.$dipendente['budget_impegnato'].' €</td></tr>';
+                        $ore_impegnate_piano_formativo=null;
+                        foreach ($this->cruscottodipendentipiano as $dipendente_piano){if($dipendente_piano['id']==$dipendente['id']){$ore_impegnate_piano_formativo=$dipendente_piano['ore_impegnate'];break;}}
+                        echo '<tr class="d-flex"><td class="col-3">'.$dipendente['cognome'].'</td><td class="col-2">'.$dipendente['ore_impegnate'].' - <span class="red">'.$ore_impegnate_piano_formativo.'</span></td><td class="col-2">'.$dipendente['ore_ferie'].'</td><td id_dipendente_ore_residue='.$dipendente['id'].' ore_residue_dipendente='.$dipendente['ore_residue'].' class="col-2">'.$dipendente['ore_residue'].'</td><td class="col-3">'.$dipendente['budget_impegnato'].' €</td></tr>';
                     }?>
                 </tbody>
             </table>
