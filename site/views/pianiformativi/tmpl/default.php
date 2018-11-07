@@ -198,7 +198,7 @@ defined('_JEXEC') or die;
                 <tbody>
                     <?php foreach ($this->cruscottodipendenti as $dipendente){
                         $ore_impegnate_piano_formativo=null;
-                        foreach ($this->cruscottodipendentipiano as $dipendente_piano){if($dipendente_piano['id']==$dipendente['id']){$ore_impegnate_piano_formativo=$dipendente_piano['ore_impegnate'];break;}}
+                        if($this->cruscottodipendentipiano){foreach ($this->cruscottodipendentipiano as $dipendente_piano){if($dipendente_piano['id']==$dipendente['id']){$ore_impegnate_piano_formativo=$dipendente_piano['ore_impegnate'];break;}}}
                         echo '<tr class="d-flex"><td class="col-3">'.$dipendente['cognome'].'</td><td class="col-2">'.$dipendente['ore_impegnate'].' - <span class="red">'.$ore_impegnate_piano_formativo.'</span></td><td class="col-2">'.$dipendente['ore_ferie'].'</td><td id_dipendente_ore_residue='.$dipendente['id'].' ore_residue_dipendente='.$dipendente['ore_residue'].' class="col-2">'.$dipendente['ore_residue'].'</td><td class="col-3">'.$dipendente['budget_impegnato'].' €</td></tr>';
                     }?>
                 </tbody>
@@ -336,7 +336,7 @@ defined('_JEXEC') or die;
                 <?php //COLONNA DEI TASK
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
-                        echo '<tr class=\"d-flex\" title="'.$item['descrizione_voce_costo'].'"><td style="height: 15px;"><a href=\'index.php?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='.$this->id_piano_formativo_attivo.'&id_task_to_modify='.$item['id'].'\'>' . $item['descrizione_fase'] .'-' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' €</a></td></tr>';
+                        echo '<tr class=\"d-flex\" title="'.$item['descrizione_voce_costo'].'"><td style="height: 20px;"><a href=\'index.php?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='.$this->id_piano_formativo_attivo.'&id_task_to_modify='.$item['id'].'\'>' . $item['descrizione_fase'] .'-' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' €</a></td></tr>';
                     }
                 }?>
                 </tbody>
@@ -395,11 +395,17 @@ defined('_JEXEC') or die;
 
                         for ($i = 1; $i < $totale_giorni_progetto+1; $i++) {
                             if (isset($dayoftasks[$tasknumber][$i])) {
-                                $colore_del_giorno = $dayoftasks[$tasknumber][$i];
+                                $colore_del_giorno = $dayoftasks[$tasknumber][$i][0];
+                                $ore_del_giorno=$dayoftasks[$tasknumber][$i][1];
+                                $giorno=$dayoftasks[$tasknumber][$i][2];
                             } else {
                                 $colore_del_giorno = 'none';
+                                $ore_del_giorno=null;
+                                //$giorno=$dayoftasks[$tasknumber][$i][2];
                             }
-                            echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px; height: 15px; background-color:' . $colore_del_giorno . '">' . $i . '</td>';
+                            echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px; height: 20px; background-color:' . $colore_del_giorno . '">
+                                    <input class="input_ore_giorno" giorno="'.$giorno.'" task_id='.$item['id'].' size="1" style="background-color:' . $colore_del_giorno . '" type=text value=' . $ore_del_giorno . '>
+                                   </td>';
                         }
                         echo '</tr>';
                         $tasknumber++;
@@ -463,6 +469,36 @@ defined('_JEXEC') or die;
         var id=jQuery("#piano_formativo").val();
         window.open("?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo="+id.toString(),"_self")
     });
+
+
+
+
+
+
+
+    jQuery(".input_ore_giorno").change(function(){
+
+        //var str=jQuery(event.target).attr('id').toString();
+        console.log(jQuery(event.target).attr('giorno'))
+        console.log(jQuery(event.target).attr('task_id'))
+        console.log(jQuery(event.target).val())
+        var giorno=jQuery(event.target).attr('giorno');
+        var id_task=jQuery(event.target).attr('task_id');
+        var ore=jQuery(event.target).val();
+        jQuery.ajax({
+            method: "POST",
+            cache: false,
+            url: 'index.php?option=com_ggpm&task=task.updateoregiorno&id_task='+id_task+'&data_giorno='+giorno+'&ore='+ore
+
+        }).done(function(data) {
+
+        });
+
+    });
+
+
+
+
 
 
 

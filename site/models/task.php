@@ -39,6 +39,24 @@ class ggpmModelTask  extends JModelLegacy {
         $object->valore_orario=$valore_orario;
         $object->timestamp=Date('Y-m-d h:i:s',time());
         $result=$this->_db->insertObject('u3kon_gg_task',$object);
+        $task_id=$this->_db->insertid();
+        $object_ = new StdClass;
+        $data_inizio=date_create($data_inizio);
+        $data_fine=date_create($data_fine);
+        $ore_medie_giorno=intval($ore/$durata);
+        $data_corrente=clone $data_inizio;
+        while($data_corrente<=$data_fine){
+            if(!$this->isFestivo($data_corrente) && !$this->isFerie($data_corrente,$id_dipendente)) {
+
+                $object_->id_task = $task_id;
+                $object_->data_giorno = $data_corrente->format('Y-m-d');
+                $object_->ore = $ore_medie_giorno;
+                $object_->timestamp = Date('Y-m-d h:i:s', time());
+                $result_ = $this->_db->insertObject('u3kon_gg_days_of_tasks', $object_);
+            }
+            $data_corrente= date_add($data_corrente,date_interval_create_from_date_string("1 day"));
+
+        }
         return $result;
     }
 
@@ -74,7 +92,36 @@ class ggpmModelTask  extends JModelLegacy {
 
         $result=$this->_db->execute();
 
+        $this->aggiusta_propedeuticita($id,$data_fine);
+
+
         return $result;
+    }
+
+    public function updateoregiorno($id_task,$data_giorno,$ore){
+
+        $sql='update u3kon_gg_days_of_tasks set ore='.$ore.' where id_task='.$id_task.' and data_giorno=\''.$data_giorno.'\'';
+        $this->_db->setQuery($sql);
+        $result=$this->_db->execute();
+    }
+
+    private function aggiusta_propedeuticita($id,$data_fine){
+
+        $query=$this->_db->getQuery(true);
+        $query->select('*');
+        $query->from('u3kon_gg_task');
+        $query->where('id_task_propedeutico='.$id);
+        $this->_db->setQuery($query);
+        $tasks = $this->_db->loadAssocList();
+        foreach ($tasks as $task){
+
+            $durata_aggiornata=$this->gestioneGiornidaaggiungere($task['data_inizio'],$task['durata'],$task['id_dipendente'])+1;
+            $sql='UPDATE u3kon_gg_task SET data_inizio=DATE_ADD(\''.$data_fine.'\', INTERVAL 1 DAY), data_fine=date_add(\''.$data_fine.'\', INTERVAL '.$durata_aggiornata.' DAY ) WHERE id='.$task['id'];
+            $this->_db->setQuery($sql);
+            $result=$this->_db->execute();
+            $this->aggiusta_propedeuticita($task['id'],$task['data_fine']);
+        }
+
     }
 
     public function getTask($id=null, $id_piano_formativo,$id_dipendente=null)
@@ -105,7 +152,7 @@ class ggpmModelTask  extends JModelLegacy {
             $data_maggiore = max(array_column($task, 'data_fine'));
 
             $daysoftasks = $this->createDaysoftasks($task, $data_minore, $data_maggiore);
-
+//var_dump($daysoftasks);die;
             return [$task, $data_minore, $data_maggiore, $daysoftasks];
         }else{
 
@@ -131,10 +178,14 @@ class ggpmModelTask  extends JModelLegacy {
             $data_corrente=clone $data_inizio;
 
             if(date_create($item['data_inizio'])<=$data_inizio && date_create($item['data_fine'])>=$data_inizio) {
-                $rowtask[$giorno_progetto]=$colori[$colorindex];
+                $rowtask[$giorno_progetto][0]=$colori[$colorindex];
+                $rowtask[$giorno_progetto][1]=$this->getOreFromDaysOftasks($item['id'],$data_corrente, $item['id_dipendente']);
+                $rowtask[$giorno_progetto][2]=$data_corrente->format('Y-m-d');
 
             }else{
-                $rowtask[$giorno_progetto]='none';
+                $rowtask[$giorno_progetto][0]='none';
+                $rowtask[$giorno_progetto][1]=null;
+                $rowtask[$giorno_progetto][2]=$data_corrente->format('Y-m-d');
             }
             $giorno_progetto++;
             while($data_corrente<=$data_fine){
@@ -142,10 +193,14 @@ class ggpmModelTask  extends JModelLegacy {
                 $nuova= clone date_add($data_corrente,date_interval_create_from_date_string("1 day"));
                 // var_dump($item['data_inizio']);var_dump($nuova);
                 if(date_create($item['data_inizio'])<=$nuova && date_create($item['data_fine'])>=$nuova) {
-                    $rowtask[$giorno_progetto]=$colori[$colorindex];
+                    $rowtask[$giorno_progetto][0]=$colori[$colorindex];
+                    $rowtask[$giorno_progetto][1]=$this->getOreFromDaysOftasks($item['id'],$data_corrente, $item['id_dipendente']);
+                    $rowtask[$giorno_progetto][2]=$data_corrente->format('Y-m-d');
 
                 }else{
-                    $rowtask[$giorno_progetto]='none';
+                    $rowtask[$giorno_progetto][0]='none';
+                    $rowtask[$giorno_progetto][1]=null;
+                    $rowtask[$giorno_progetto][2]=$data_corrente->format('Y-m-d');
                 }
                 $giorno_progetto++;
             }
@@ -154,15 +209,23 @@ class ggpmModelTask  extends JModelLegacy {
         return $taskrows;
     }
 
-    public function isFestivo($giorno){
+    private function getOreFromDaysOfTasks($id_task,$data_giorno, $id_dipendente){
 
-        /*$query = $this->_db->getQuery(true);
-        $query->select('data');
-        $query->from('u3kon_gg_date_festivita');
-        $query->where('data=\'1900-'.$giorno->format('m').'-'.$giorno->format('d').'\'');
+        if($this->isFestivo($data_giorno) || $this->isFerie($data_giorno,$id_dipendente))
+            return null;
+
+        $query = $this->_db->getQuery(true);
+        $query->select('ore');
+        $query->from('u3kon_gg_days_of_tasks');
+        $query->where('data_giorno=\''.$data_giorno->format('Y-m-d').'\' and id_task='.$id_task);
         $this->_db->setQuery($query);
-        $isFestivo = count($this->_db->loadAssocList());
-        return $isFestivo;*/
+        $ore = $this->_db->loadResult();
+        return $ore;
+
+
+    }
+
+    public function isFestivo($giorno){
 
         $festivitas=['01-01','01-06','04-25','05-01','06-02','08-15','11-01','12-08','12-25','12-26'];
         $pasquettas=['2019-04-22','2020-04-13','2021-04-05','2022-04-18','2023-04-10','2024-04-01','2025-04-21'];

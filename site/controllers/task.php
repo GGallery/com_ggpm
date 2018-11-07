@@ -39,6 +39,9 @@ class ggpmControllerTask extends JControllerLegacy
         $this->_filterparam->id_dipendente=JRequest::getVar('id_dipendente');
         $this->_filterparam->id_task_propedeutico=JRequest::getVar('id_task_propedeutico');
         $this->_filterparam->valore_orario=JRequest::getVar('valore_orario');
+        $this->_filterparam->id_task=JRequest::getVar('id_task');
+        $this->_filterparam->data_giorno=JRequest::getVar('data_giorno');
+        $this->_filterparam->ore=JRequest::getVar('ore');
 
     }
     public function insert(){
@@ -99,6 +102,13 @@ class ggpmControllerTask extends JControllerLegacy
 
         $model=new ggpmModelTask();
         echo json_encode($model->verificaCaricodipendente($this->_filterparam->id_dipendente,$this->_filterparam->data_inizio,$this->_filterparam->data_fine));
+        $this->_app->close();
+    }
+
+    public function updateoregiorno(){
+
+        $model=new ggpmModelTask();
+        echo json_encode($model->updateoregiorno($this->_filterparam->id_task,$this->_filterparam->data_giorno,$this->_filterparam->ore));
         $this->_app->close();
     }
 }
