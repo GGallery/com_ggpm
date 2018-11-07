@@ -336,7 +336,7 @@ defined('_JEXEC') or die;
                 <?php //COLONNA DEI TASK
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
-                        echo '<tr class=\"d-flex\" title="'.$item['descrizione_voce_costo'].'"><td style="height: 20px;"><a href=\'index.php?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='.$this->id_piano_formativo_attivo.'&id_task_to_modify='.$item['id'].'\'>' . $item['descrizione_fase'] .'-' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' €</a></td></tr>';
+                        echo '<tr class=\"d-flex\" title="'.$item['descrizione_voce_costo'].'"><td style="height: 20px;"><a href=\'index.php?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='.$this->id_piano_formativo_attivo.'&id_task_to_modify='.$item['id'].'\'>' . $item['descrizione_fase'] .'-' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' € '.$item['ore'].'</a></td></tr>';
                     }
                 }?>
                 </tbody>
@@ -404,7 +404,7 @@ defined('_JEXEC') or die;
                                 //$giorno=$dayoftasks[$tasknumber][$i][2];
                             }
                             echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px; height: 20px; background-color:' . $colore_del_giorno . '">
-                                    <input class="input_ore_giorno" giorno="'.$giorno.'" task_id='.$item['id'].' size="1" style="background-color:' . $colore_del_giorno . '" type=text value=' . $ore_del_giorno . '>
+                                    <input class="input_ore_giorno" giorno="'.$giorno.'" task_id='.$item['id'].' size="1" style="background-color:' . $colore_del_giorno . '" type=text ore=' . $ore_del_giorno . ' value=' . $ore_del_giorno . '>
                                    </td>';
                         }
                         echo '</tr>';
@@ -471,11 +471,6 @@ defined('_JEXEC') or die;
     });
 
 
-
-
-
-
-
     jQuery(".input_ore_giorno").change(function(){
 
         //var str=jQuery(event.target).attr('id').toString();
@@ -484,22 +479,18 @@ defined('_JEXEC') or die;
         console.log(jQuery(event.target).val())
         var giorno=jQuery(event.target).attr('giorno');
         var id_task=jQuery(event.target).attr('task_id');
-        var ore=jQuery(event.target).val();
+        var ore_vecchie=jQuery(event.target).attr('ore');
+        var ore_nuove=jQuery(event.target).val();
         jQuery.ajax({
             method: "POST",
             cache: false,
-            url: 'index.php?option=com_ggpm&task=task.updateoregiorno&id_task='+id_task+'&data_giorno='+giorno+'&ore='+ore
+            url: 'index.php?option=com_ggpm&task=task.updateoregiorno&id_task='+id_task+'&data_giorno='+giorno+'&ore='+ore_nuove+'&ore_vecchie='+ore_vecchie
 
         }).done(function(data) {
 
         });
 
     });
-
-
-
-
-
 
 
     jQuery("#task_ruolo").change(function(){

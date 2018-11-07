@@ -70,42 +70,49 @@ class ggpmModelTask  extends JModelLegacy {
         return $result;
     }
 
-    public function modify($id,$id_piano_formativo,$descrizione,$data_inizio,$data_fine,$durata,$id_voce_costo,$ore, $id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario){
+    public function deletedaysoftasks($id_task){
 
 
-        $sql="update u3kon_gg_task 
-              set id_piano_formativo=".$id_piano_formativo.",
-                    descrizione='".$descrizione."', 
-                    id_piano_formativo=".$id_piano_formativo.",
-                    data_inizio='".$data_inizio."', 
-                    data_fine='".$data_fine."', 
-                    durata=".$durata.", 
-                    id_voce_costo=".$id_voce_costo.",
-                    ore=".$ore.",
-                    id_ruolo=".$id_ruolo.",
-                    id_dipendente=".$id_dipendente.",
-                    id_task_propedeutico=".$id_task_propedeutico.",
-                    valore_orario='".$valore_orario."'
-                    where id=".$id;
-
+        $sql="delete from u3kon_gg_days_of_tasks where id_task=".$id_task;
         $this->_db->setQuery($sql);
-
         $result=$this->_db->execute();
-
-        $this->aggiusta_propedeuticita($id,$data_fine);
-
 
         return $result;
     }
 
-    public function updateoregiorno($id_task,$data_giorno,$ore){
+    public function modify($id,$id_piano_formativo,$descrizione,$data_inizio,$data_fine,$durata,$id_voce_costo,$ore, $id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario){
+
+
+        if(
+        $this->delete($id)
+        && $this->deletedaysoftasks($id)
+        && $this->insert($id_piano_formativo,$descrizione,$data_inizio,$data_fine,$durata,$ore,$id_voce_costo,$id_ruolo,$id_dipendente,$id_task_propedeutico,$valore_orario)
+        //&& $this->aggiusta_propedeuticita($id,$data_fine,$this->_db->insertid())
+        ){
+
+            return true;
+        }else {
+
+            return false;
+        }
+    }
+
+    public function updateoregiorno($id_task,$data_giorno,$ore,$ore_vecchie){
+
+
 
         $sql='update u3kon_gg_days_of_tasks set ore='.$ore.' where id_task='.$id_task.' and data_giorno=\''.$data_giorno.'\'';
         $this->_db->setQuery($sql);
         $result=$this->_db->execute();
+
+        $diff_ore=$ore-$ore_vecchie;
+        $sql_='update u3kon_gg_task set ore=ore+('.$diff_ore.') where id='.$id_task;
+        $this->_db->setQuery($sql_);
+        $result=$this->_db->execute();
+
     }
 
-    private function aggiusta_propedeuticita($id,$data_fine){
+    private function aggiusta_propedeuticita($id,$data_fine,$nuovo_id){
 
         $query=$this->_db->getQuery(true);
         $query->select('*');
@@ -116,7 +123,7 @@ class ggpmModelTask  extends JModelLegacy {
         foreach ($tasks as $task){
 
             $durata_aggiornata=$this->gestioneGiornidaaggiungere($task['data_inizio'],$task['durata'],$task['id_dipendente'])+1;
-            $sql='UPDATE u3kon_gg_task SET data_inizio=DATE_ADD(\''.$data_fine.'\', INTERVAL 1 DAY), data_fine=date_add(\''.$data_fine.'\', INTERVAL '.$durata_aggiornata.' DAY ) WHERE id='.$task['id'];
+            $sql='UPDATE u3kon_gg_task SET data_inizio=DATE_ADD(\''.$data_fine.'\', INTERVAL 1 DAY), data_fine=date_add(\''.$data_fine.'\', INTERVAL '.$durata_aggiornata.' DAY ), id_task_propedeutico='.$nuovo_id.' WHERE id='.$task['id'];
             $this->_db->setQuery($sql);
             $result=$this->_db->execute();
             $this->aggiusta_propedeuticita($task['id'],$task['data_fine']);
@@ -211,8 +218,9 @@ class ggpmModelTask  extends JModelLegacy {
 
     private function getOreFromDaysOfTasks($id_task,$data_giorno, $id_dipendente){
 
-        if($this->isFestivo($data_giorno) || $this->isFerie($data_giorno,$id_dipendente))
+        if ($this->isFestivo($data_giorno) || $this->isFerie($data_giorno, $id_dipendente))
             return null;
+
 
         $query = $this->_db->getQuery(true);
         $query->select('ore');

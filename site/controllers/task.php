@@ -42,6 +42,7 @@ class ggpmControllerTask extends JControllerLegacy
         $this->_filterparam->id_task=JRequest::getVar('id_task');
         $this->_filterparam->data_giorno=JRequest::getVar('data_giorno');
         $this->_filterparam->ore=JRequest::getVar('ore');
+        $this->_filterparam->ore_vecchie=JRequest::getVar('ore_vecchie');
 
     }
     public function insert(){
@@ -108,7 +109,7 @@ class ggpmControllerTask extends JControllerLegacy
     public function updateoregiorno(){
 
         $model=new ggpmModelTask();
-        echo json_encode($model->updateoregiorno($this->_filterparam->id_task,$this->_filterparam->data_giorno,$this->_filterparam->ore));
+        echo json_encode($model->updateoregiorno($this->_filterparam->id_task,$this->_filterparam->data_giorno,$this->_filterparam->ore,$this->_filterparam->ore_vecchie));
         $this->_app->close();
     }
 }
