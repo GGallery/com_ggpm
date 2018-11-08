@@ -50,7 +50,7 @@ class ggpmModelTask  extends JModelLegacy {
 
                 $object_->id_task = $task_id;
                 $object_->data_giorno = $data_corrente->format('Y-m-d');
-                $object_->ore = $ore_medie_giorno;
+                $object_->ore = $this->calcola_capienza_giorno_dipendente($ore_medie_giorno,$id_dipendente,$data_corrente);
                 $object_->timestamp = Date('Y-m-d h:i:s', time());
                 $result_ = $this->_db->insertObject('u3kon_gg_days_of_tasks', $object_);
             }
@@ -60,6 +60,24 @@ class ggpmModelTask  extends JModelLegacy {
         return $result;
     }
 
+    private function calcola_capienza_giorno_dipendente($ore_medie_giorno,$id_dipendente,$data_giorno){
+
+        $query=$this->_db->getQuery(true);
+        $query->select('sum(d.ore)');
+        $query->from('u3kon_gg_days_of_tasks as d');
+        $query->join('inner','u3kon_gg_task as t on d.id_task=t.id');
+        $query->where('t.id_dipendente='.$id_dipendente.' and d.data_giorno=\''.$data_giorno->format('Y-m-d').'\'');
+//echo $query;die;
+        $this->_db->setQuery($query);
+        $oreimpegnate = $this->_db->loadResult();
+        echo $oreimpegnate.'<br>';
+        if($oreimpegnate+$ore_medie_giorno<=8){
+            return $ore_medie_giorno;
+        }else{
+            return 0;
+        }
+
+    }
     public function delete($id){
 
 
@@ -173,7 +191,7 @@ class ggpmModelTask  extends JModelLegacy {
         $mese_inizio=date_create($data_inizio)->format('m');
         $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
         $data_fine=date_create($data_fine);
-        $colori=['#008000','#FF0000','#0000FF'];
+        $colori=['#ff9900','#00cc00','#9999ff'];
         $taskrows=[];
         $colorindex=0;
         foreach ($task as $item){
@@ -185,8 +203,9 @@ class ggpmModelTask  extends JModelLegacy {
             $data_corrente=clone $data_inizio;
 
             if(date_create($item['data_inizio'])<=$data_inizio && date_create($item['data_fine'])>=$data_inizio) {
-                $rowtask[$giorno_progetto][0]=$colori[$colorindex];
+
                 $rowtask[$giorno_progetto][1]=$this->getOreFromDaysOftasks($item['id'],$data_corrente, $item['id_dipendente']);
+                $rowtask[$giorno_progetto][0]=($rowtask[$giorno_progetto][1]!=0)?$colori[$colorindex]:'#ff0000';
                 $rowtask[$giorno_progetto][2]=$data_corrente->format('Y-m-d');
 
             }else{
@@ -200,8 +219,9 @@ class ggpmModelTask  extends JModelLegacy {
                 $nuova= clone date_add($data_corrente,date_interval_create_from_date_string("1 day"));
                 // var_dump($item['data_inizio']);var_dump($nuova);
                 if(date_create($item['data_inizio'])<=$nuova && date_create($item['data_fine'])>=$nuova) {
-                    $rowtask[$giorno_progetto][0]=$colori[$colorindex];
+
                     $rowtask[$giorno_progetto][1]=$this->getOreFromDaysOftasks($item['id'],$data_corrente, $item['id_dipendente']);
+                    $rowtask[$giorno_progetto][0]=($rowtask[$giorno_progetto][1]!=0)?$colori[$colorindex]:'#ff0000';
                     $rowtask[$giorno_progetto][2]=$data_corrente->format('Y-m-d');
 
                 }else{
