@@ -151,7 +151,7 @@ defined('_JEXEC') or die;
                                     <span class="start_span" id="span_budget_budget_<?php echo $item['id']?>"><?php echo $item['budget']?> €</span>
                                     <input id="input_budget_budget_<?php echo $item['id']?>" class="start_hidden_input form-control form-control-sm" type="text" value="<?php echo $item['budget']?>"></td>
                                 <td class="col-2">
-                                    <span class="start_span" id="span_budget_budget_<?php echo $item['id']?>"><?php echo $item['totale_costo']?> €</span>
+                                    <span class="start_span <?php if($item['totale_costo']>$item['budget']) echo "red"; ?>" id="span_budget_budget_<?php echo $item['id']?>"><?php echo $item['totale_costo']?> €</span>
                                 </td>
                                 <td class="col-2">
                                     <button><span class="modify_budget_button oi oi-pencil" title="modifica" aria-hidden="true" id="<?php echo $item['id']; ?>"></span></button>
@@ -386,7 +386,7 @@ defined('_JEXEC') or die;
                 <tbody>
                 <?php //RIGHE DEI TASK
                 if(isset($this->task[3]))
-                $dayoftasks=$this->task[3];
+                    $dayoftasks=$this->task[3];
                 $tasknumber=0;
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
@@ -411,10 +411,14 @@ defined('_JEXEC') or die;
                         $tasknumber++;
                     }
                 }?>
+
                 </tbody>
             </table>
 
+
+
         </div>
+        <table><tr class="d-flex"><td class="col-12"><button  class="form-control btn btn-outline-secondary btn-sm" id="reportCvs" onclick="opencsv()">REPORT CSV</button></td></tr></table>
     </div>
 </div>
 <!-- Modal -->
@@ -621,10 +625,13 @@ defined('_JEXEC') or die;
                 if (diff>0){alert('attenzione, aggiunti '+diff.toString()+' giorni per ferie o festività')}
                 var data_fine=new Date(jQuery("#task_data_inizio").val());
                 data_fine.setDate(data_fine.getDate()+parseInt(durata))
-
+                console.log("data fine del po: <?php echo $this->data_fine_piano_formativo; ?> ");
+                console.log(new Date('<?php echo $this->data_fine_piano_formativo; ?>').getTime());
+                if(data_fine.getTime()>new Date('<?php echo $this->data_fine_piano_formativo; ?>').getTime()){
+                    alert("attenzione, questo task va oltre la fine del piano formativo");
+                }
                 jQuery("#task_data_fine_calcolata").html(data_fine.getDate().toString()+"/"+(data_fine.getMonth()+1).toString()+"/"+data_fine.getFullYear());
                 verificacaricodipendente(id_dipendente,data_inizio,data_fine.getFullYear().toString()+"-"+(data_fine.getMonth()+1).toString()+"-"+data_fine.getDate().toString());
-
                 current_data_fine=data_fine.getFullYear().toString()+"-"+(data_fine.getMonth()+1).toString()+"-"+data_fine.getDate().toString();
             });
 
@@ -972,5 +979,12 @@ defined('_JEXEC') or die;
         }
     }
 
+    function opencsv() {
+        if(confirm('vuoi scaricare il report in csv')==true) {
+          window.open("index.php?option=com_ggpm&task=pianiformativi.getCsv&id=" + <?php echo $this->id_piano_formativo_attivo?>,'_self');
+
+        }
+
+    }
 </script>
 </html>

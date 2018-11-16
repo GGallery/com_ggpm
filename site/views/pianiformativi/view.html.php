@@ -21,6 +21,7 @@ require_once JPATH_COMPONENT . '/models/vocicosto.php';
 require_once JPATH_COMPONENT . '/models/ruoli.php';
 require_once JPATH_COMPONENT . '/models/task.php';
 require_once JPATH_COMPONENT . '/models/dipendenti.php';
+require_once JPATH_COMPONENT . '/controllers/pianiformativi.php';
 
 class ggpmViewPianiformativi extends JViewLegacy {
 
@@ -51,12 +52,16 @@ class ggpmViewPianiformativi extends JViewLegacy {
         if($this->id_piano_formativo_attivo!=null){
             $model=new ggpmModelBudget();
             $this->budget=$model->getBudget(null,$this->id_piano_formativo_attivo);
-            $this->descrizione_piano_formativo_attivo=$this->getModel()->getPianiformativi($this->id_piano_formativo_attivo)[0]['descrizione'];
+            $piano_formativo=$this->getModel()->getPianiformativi($this->id_piano_formativo_attivo)[0];
+            $this->descrizione_piano_formativo_attivo=$piano_formativo['descrizione'];
+            $this->data_fine_piano_formativo=$piano_formativo['data_fine'];
+
             $taskModel=new ggpmModelTask();
             $this->task=$taskModel->getTask(null,$this->id_piano_formativo_attivo,null);
             $data_inizio=date_create($this->task[1]);
             $data_fine=date_create($this->task[2]);
-            $this->calendario_piano_formativo=$this->createCalendario($data_inizio,$data_fine);
+            $controller=new ggpmControllerPianiformativi();
+            $this->calendario_piano_formativo=$controller->createCalendario($data_inizio,$data_fine);
             $this->cruscottodipendentipiano=$dipendentiModel->getCruscottodipendenti($this->id_piano_formativo_attivo);
         }
 
@@ -71,43 +76,7 @@ class ggpmViewPianiformativi extends JViewLegacy {
         parent::display($tpl);
     }
 
-    private function createCalendario($data_inizio,$data_fine){
 
-        $array_dei_mesi=[];
-        $array_dei_giorni=[];
-        $giorno_corrente_=[];
-        $anno_inizio=$data_inizio->format('Y');
-        $mese_inizio=$data_inizio->format('m');
-        $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
-        $anno_inizio=$data_inizio->format('Y');
-        $mese_inizio=$data_inizio->format('m');
-        $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
-        $data_corrente=clone $data_inizio;
-        $data_corrente_=clone $data_inizio;
-        array_push($array_dei_mesi,clone $data_inizio);//AGGIUNGE IL PRIMO MESE
-        $giorno_corrente_['data']=clone $data_corrente_;
-        $taskModel=new ggpmModelTask();
-        $giorno_corrente_['f']=$taskModel->isFestivo($data_corrente_);
-        array_push($array_dei_giorni,$giorno_corrente_);
-        while($data_corrente<$data_fine){
-            $mese__corrente= clone date_add($data_corrente,date_interval_create_from_date_string("1 month"));
-            if($mese__corrente<$data_fine)//previene l'aggiunta del mese successivo alla data di fine progetto
-                array_push($array_dei_mesi,$mese__corrente);
-        }
-
-        while($data_corrente_<$data_fine){
-
-            $giorno_corrente_['data']=clone date_add($data_corrente_,date_interval_create_from_date_string("1 day"));
-            //$taskModel=new ggpmModelTask();
-            $giorno_corrente_['f']=$taskModel->isFestivo($data_corrente_);
-            array_push($array_dei_giorni,$giorno_corrente_);
-
-        }
-        //var_dump($data_fine);
-        //var_dump($array_dei_mesi);die;
-        return [$array_dei_mesi,$array_dei_giorni];
-
-    }
 
 
 }
