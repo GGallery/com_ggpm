@@ -465,13 +465,14 @@ defined('_JEXEC') or die;
 
 
     // console.log(ruoli_dipendenti.filter(x => x.ruolo === 'progettista'));
-    var piano_formativo_attivo=<?php if($this->id_piano_formativo_attivo){ echo $this->id_piano_formativo_attivo; } else { echo "null";}?>;
+    var piano_formativo_attivo=<?php if(isset($this->id_piano_formativo_attivo)){ echo $this->id_piano_formativo_attivo; } else { echo "null";}?>
 
 
     jQuery("#piano_formativo").change(function(event){
 
         var id=jQuery("#piano_formativo").val();
-        window.open("?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo="+id.toString(),"_self")
+       //window.open("?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo="+id.toString(),"_self")
+        location.href="?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo="+id.toString();
     });
 
 
@@ -625,9 +626,9 @@ defined('_JEXEC') or die;
                 if (diff>0){alert('attenzione, aggiunti '+diff.toString()+' giorni per ferie o festività')}
                 var data_fine=new Date(jQuery("#task_data_inizio").val());
                 data_fine.setDate(data_fine.getDate()+parseInt(durata))
-                console.log("data fine del po: <?php echo $this->data_fine_piano_formativo; ?> ");
-                console.log(new Date('<?php echo $this->data_fine_piano_formativo; ?>').getTime());
-                if(data_fine.getTime()>new Date('<?php echo $this->data_fine_piano_formativo; ?>').getTime()){
+                //console.log("data fine del po: <?php //echo $this->data_fine_piano_formativo; ?> ");
+                //console.log(new Date('<?php //echo $this->data_fine_piano_formativo; ?>').getTime());
+                if(data_fine.getTime()>new Date('<?php if(isset($this->data_fine_piano_formativo)){echo $this->data_fine_piano_formativo;} ?>').getTime()){
                     alert("attenzione, questo task va oltre la fine del piano formativo");
                 }
                 jQuery("#task_data_fine_calcolata").html(data_fine.getDate().toString()+"/"+(data_fine.getMonth()+1).toString()+"/"+data_fine.getFullYear());
@@ -791,7 +792,7 @@ defined('_JEXEC') or die;
 
     function elimina_task(){
 
-        var id=<?php echo $this->id_task_to_modify;?>
+        var id=<?php if(isset($this->id_task_to_modify)){echo $this->id_task_to_modify;}else{echo null;};?>
 
         jQuery.ajax({
             method: "POST",
@@ -980,8 +981,10 @@ defined('_JEXEC') or die;
     }
 
     function opencsv() {
-        if(confirm('vuoi scaricare il report in csv')==true) {
-          window.open("index.php?option=com_ggpm&task=pianiformativi.getCsv&id=" + <?php echo $this->id_piano_formativo_attivo?>,'_self');
+        if(confirm('vuoi scaricare il report in csv?')==true) {
+            <?php if(isset($this->id_piano_formativo_attivo)){?>
+          window.open("index.php?option=com_ggpm&task=pianiformativi.getCsv&id=" + <?php echo $this->id_piano_formativo_attivo;?>,'_self');
+          <?php }?>
 
         }
 
