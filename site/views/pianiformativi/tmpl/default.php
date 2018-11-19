@@ -336,7 +336,7 @@ defined('_JEXEC') or die;
                 <?php //COLONNA DEI TASK
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
-                        echo '<tr class=\"d-flex\" title="'.$item['descrizione_voce_costo'].'"><td style="height: 20px;"><a href=\'index.php?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='.$this->id_piano_formativo_attivo.'&id_task_to_modify='.$item['id'].'\'>' . $item['descrizione_fase'] .'-' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' € '.$item['ore'].'</a></td></tr>';
+                        echo '<tr class=\"d-flex\" title="'.$item['descrizione_voce_costo'].'"><td style="height: 20px;"><a href=\'?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='.$this->id_piano_formativo_attivo.'&id_task_to_modify='.$item['id'].'\'>' . $item['descrizione_fase'] .'-' . $item['descrizione'] . '-'.$item['cognome'].'-'.$item['task_budget'].' € '.$item['ore'].'</a></td></tr>';
                     }
                 }?>
                 </tbody>
@@ -784,8 +784,8 @@ defined('_JEXEC') or die;
         }).done(function() {
 
             alert("aggiornamento riuscito");
-            window.open('index.php/gestione-piani-formativi?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='+id_piano_formativo, '_self')
-
+            //window.open('index.php/gestione-piani-formativi?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo='+id_piano_formativo, '_self')
+            location.href="?option=com_ggpm&view=pianiformativi&id_piano_formativo_attivo="+id_piano_formativo
 
         });
     }
