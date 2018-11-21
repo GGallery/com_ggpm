@@ -31,7 +31,7 @@ class ggpmModelTask  extends JModelLegacy {
         $object->data_inizio = $data_inizio;
         $object->data_fine = $data_fine;
         $object->durata=$durata;
-        $object->ore=$ore;
+        $object->ore=(intval($ore/$durata))*$durata;
         $object->id_voce_costo=$id_voce_costo;
         $object->id_ruolo=$id_ruolo;
         $object->id_dipendente=$id_dipendente;
@@ -153,10 +153,11 @@ class ggpmModelTask  extends JModelLegacy {
     {
 
         $query = $this->_db->getQuery(true);
-        $query->select('task.* ,task.data_fine as data_fine, d.cognome as cognome, 
+        $query->select('task.*,task.data_fine as data_fine, d.cognome as cognome, (select sum(ore) from u3kon_gg_days_of_tasks as dot where dot.id_task=task.id) as ore,
                 p.descrizione as descrizione_piano, task.ore*task.valore_orario as task_budget, f.descrizione as descrizione_fase, 
                 v.descrizione as descrizione_voce_costo, task.id_voce_costo as id_voce_costo, task.id_ruolo as id_ruolo, task.id_dipendente as id_dipendente, task.id_task_propedeutico as id_task_propedeutico');
         $query->from('u3kon_gg_task as task');
+
         $query->join('inner','u3kon_gg_dipendenti as d on task.id_dipendente=d.id');
         $query->join('inner','u3kon_gg_piani_formativi as p on p.id=task.id_piano_formativo');
         $query->join('inner','u3kon_gg_voci_costo as v on v.id=task.id_voce_costo');
@@ -167,7 +168,8 @@ class ggpmModelTask  extends JModelLegacy {
             $query->where('task.id_piano_formativo=' . $id_piano_formativo);
         if ($id_dipendente!=null)
            $query->where('task.id_dipendente='.$id_dipendente);
-        $query->order('data_inizio ASC');
+        $query->order('task.data_inizio ASC');
+        //echo $query; die;
         $this->_db->setQuery($query);
 
         $task = $this->_db->loadAssocList();

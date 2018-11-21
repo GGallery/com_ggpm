@@ -111,9 +111,10 @@ class ggpmModelDipendenti  extends JModelLegacy {
     public function getCruscottodipendenti($id_piano_formativo=null){
 
         $query=$this->_db->getQuery(true);
-        $query->select('d.id, d.cognome, sum(t.ore*t.valore_orario) as budget_impegnato, d.monte_ore as monte_ore, sum(t.ore) as ore_impegnate');
+        $query->select('d.id, d.cognome, sum(dot.ore*t.valore_orario) as budget_impegnato, d.monte_ore as monte_ore, sum(dot.ore) as ore_impegnate');
         $query->from('u3kon_gg_dipendenti as d');
         $query->join('left','u3kon_gg_task as t on t.id_dipendente=d.id');
+        $query->join('left','u3kon_gg_days_of_tasks as dot on dot.id_task=t.id');
         if($id_piano_formativo!=null)
             $query->where('t.id_piano_formativo='.$id_piano_formativo);
         $query->group('d.id');
