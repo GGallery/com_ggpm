@@ -80,7 +80,9 @@ class ggpmControllerPianiformativi extends JControllerLegacy
         $taskModel=new ggpmModelTask();
         $this->task=$taskModel->getTask(null,$id_piano_formativo_attivo,null);
         $data_inizio=date_create($this->task[1]);
-        $data_fine=date_create($this->task[2]);
+
+        $data_fine=$this->task[2];
+
         $calendario_piano_formativo=$this->createCalendario($data_inizio,$data_fine);
         $taskModel=new ggpmModelTask();
         $task=$taskModel->getTask(null,$this->_filterparam->id,null);
