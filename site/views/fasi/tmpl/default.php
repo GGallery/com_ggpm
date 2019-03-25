@@ -65,7 +65,7 @@ defined('_JEXEC') or die;
 
 
 <div class="table-responsive">
-    <h2>FOR - GESTIONE PIANI FORMATIVI - FASI</h2>
+    <h2>GESTIONE PIANI FORMATIVI - FASI</h2>
     <table class="table table-striped table-bordered ">
         <thead>
         <tr>

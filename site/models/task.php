@@ -117,7 +117,7 @@ class ggpmModelTask  extends JModelLegacy {
 
     public function updateoregiorno($id_task,$data_giorno,$ore,$ore_vecchie)
     {
-
+/*
         $sql = 'insert into u3kon_gg_days_of_tasks  (id_task,data_giorno,ore,timestamp) values (' . $id_task . ',\'' . $data_giorno . '\',' . $ore . ',now()) on duplicate key update ore=' . $ore;
         //echo $sql;die;
         $this->_db->setQuery($sql);
@@ -127,21 +127,30 @@ class ggpmModelTask  extends JModelLegacy {
         $sql_ = 'update u3kon_gg_task set ore=ore+(' . $diff_ore . ') where id=' . $id_task;
         $this->_db->setQuery($sql_);
         $result = $this->_db->execute();
-
-        if ($data_giorno > $this->getTask($id_task, null, null)[0]['data_fine']) {
+//var_dump($this->getTask($id_task, null, null)[0][0]['data_fine']);die;
+        if ($data_giorno > $this->getTask($id_task, null, null)[0][0]['data_fine']) {
             $sql = 'update u3kon_gg_task set data_fine=\'' . $data_giorno . '\' where id=' . $id_task;
             $this->_db->setQuery($sql);
             $result = $this->_db->execute();
 
         }
 
-        if ($data_giorno < $this->getTask($id_task, null, null)[0]['data_inizio']) {
+        if ($data_giorno < $this->getTask($id_task, null, null)[0][0]['data_inizio']) {
             $sql = 'update u3kon_gg_task set data_inizio=\'' . $data_giorno . '\' where id=' . $id_task;
             $this->_db->setQuery($sql);
             $result = $this->_db->execute();
 
 
-        }
+        }*/
+
+        $sql='update u3kon_gg_days_of_tasks set ore='.$ore.' where id_task='.$id_task.' and data_giorno=\''.$data_giorno.'\'';
+        $this->_db->setQuery($sql);
+        $result=$this->_db->execute();
+
+        $diff_ore=$ore-$ore_vecchie;
+        $sql_='update u3kon_gg_task set ore=ore+('.$diff_ore.') where id='.$id_task;
+        $this->_db->setQuery($sql_);
+        $result=$this->_db->execute();
     }
 
     private function aggiusta_propedeuticita($id,$data_fine,$nuovo_id){

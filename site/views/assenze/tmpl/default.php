@@ -62,7 +62,7 @@ defined('_JEXEC') or die;
 
 
 <div class="table-responsive">
-    <h2>FOR - GESTIONE PIANI FORMATIVI - ASSENZE DIPENDENTI</h2>
+    <h2>GESTIONE PIANI FORMATIVI - ASSENZE DIPENDENTI</h2>
 
 
         <?php
