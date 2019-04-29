@@ -180,39 +180,41 @@ class ggpmControllerPianiformativi extends JControllerLegacy
 
     public function createCalendario($data_inizio,$data_fine){
 
-        $array_dei_mesi=[];
-        $array_dei_giorni=[];
+
         $giorno_corrente_=[];
+        $data_semplice=[];
+        $calendario=[];
         $anno_inizio=$data_inizio->format('Y');
         $mese_inizio=$data_inizio->format('m');
         $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
-        $anno_inizio=$data_inizio->format('Y');
-        $mese_inizio=$data_inizio->format('m');
-        $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
+        $data_fine=date_create($data_fine);
         $data_corrente=clone $data_inizio;
-        $data_corrente_=clone $data_inizio;
-        array_push($array_dei_mesi,clone $data_inizio);//AGGIUNGE IL PRIMO MESE
-        $giorno_corrente_['data']=clone $data_corrente_;
+        array_push($data_semplice,date_format($data_inizio,'Y-m-d'));
+        $giorno_corrente['data']=$data_inizio;
         $taskModel=new ggpmModelTask();
-        $giorno_corrente_['f']=$taskModel->isFestivo($data_corrente_);
-        array_push($array_dei_giorni,$giorno_corrente_);
+        $giorno_corrente['f']=$taskModel->isFestivo($data_inizio);
+        array_push($calendario,$giorno_corrente);
         while($data_corrente<$data_fine){
-            $mese__corrente= clone date_add($data_corrente,date_interval_create_from_date_string("1 month"));
-            if($mese__corrente<$data_fine)//previene l'aggiunta del mese successivo alla data di fine progetto
-                array_push($array_dei_mesi,$mese__corrente);
-        }
-
-        while($data_corrente_<$data_fine){
-
-            $giorno_corrente_['data']=clone date_add($data_corrente_,date_interval_create_from_date_string("1 day"));
-            //$taskModel=new ggpmModelTask();
+            $data_corrente_=clone date_add($data_corrente,date_interval_create_from_date_string("1 day"));
+            array_push($data_semplice,date_format($data_corrente_,'Y-m-d'));
+            $giorno_corrente_['data']=$data_corrente_;
+            $taskModel=new ggpmModelTask();
+           // echo $data_corrente_->format('Y-m-d').'<br>';
+           // echo $giorno_corrente_['data']->format('Y-m-d').'<br>';
             $giorno_corrente_['f']=$taskModel->isFestivo($data_corrente_);
-            array_push($array_dei_giorni,$giorno_corrente_);
+           // echo $giorno_corrente_['f'].'<br>';
+            array_push($calendario,$giorno_corrente_);
+            //var_dump($giorno_corrente_);
 
         }
-        //var_dump($data_fine);
-        //var_dump($array_dei_mesi);die;
-        return [$array_dei_mesi,$array_dei_giorni];
+
+
+        $mesi = array_unique(array_map(function($date) {
+            return DateTime::createFromFormat('Y-m-d', $date)->format('n');
+        }, $data_semplice));
+
+
+        return [$mesi,$calendario];
 
     }
 

@@ -117,31 +117,7 @@ class ggpmModelTask  extends JModelLegacy {
 
     public function updateoregiorno($id_task,$data_giorno,$ore,$ore_vecchie)
     {
-/*
-        $sql = 'insert into u3kon_gg_days_of_tasks  (id_task,data_giorno,ore,timestamp) values (' . $id_task . ',\'' . $data_giorno . '\',' . $ore . ',now()) on duplicate key update ore=' . $ore;
-        //echo $sql;die;
-        $this->_db->setQuery($sql);
-        $result = $this->_db->execute();
 
-        $diff_ore = $ore - $ore_vecchie;
-        $sql_ = 'update u3kon_gg_task set ore=ore+(' . $diff_ore . ') where id=' . $id_task;
-        $this->_db->setQuery($sql_);
-        $result = $this->_db->execute();
-//var_dump($this->getTask($id_task, null, null)[0][0]['data_fine']);die;
-        if ($data_giorno > $this->getTask($id_task, null, null)[0][0]['data_fine']) {
-            $sql = 'update u3kon_gg_task set data_fine=\'' . $data_giorno . '\' where id=' . $id_task;
-            $this->_db->setQuery($sql);
-            $result = $this->_db->execute();
-
-        }
-
-        if ($data_giorno < $this->getTask($id_task, null, null)[0][0]['data_inizio']) {
-            $sql = 'update u3kon_gg_task set data_inizio=\'' . $data_giorno . '\' where id=' . $id_task;
-            $this->_db->setQuery($sql);
-            $result = $this->_db->execute();
-
-
-        }*/
 
         $sql='update u3kon_gg_days_of_tasks set ore='.$ore.' where id_task='.$id_task.' and data_giorno=\''.$data_giorno.'\'';
         $this->_db->setQuery($sql);
@@ -151,6 +127,7 @@ class ggpmModelTask  extends JModelLegacy {
         $sql_='update u3kon_gg_task set ore=ore+('.$diff_ore.') where id='.$id_task;
         $this->_db->setQuery($sql_);
         $result=$this->_db->execute();
+        return $result;
     }
 
     private function aggiusta_propedeuticita($id,$data_fine,$nuovo_id){
@@ -172,11 +149,11 @@ class ggpmModelTask  extends JModelLegacy {
 
     }
 
-    public function getTask($id=null, $id_piano_formativo,$id_dipendente=null)
+    public function getTask($id=null, $id_piano_formativo,$id_dipendente=null,$list_only=false)
     {
 
         $query = $this->_db->getQuery(true);
-        $query->select('task.*,task.data_fine as data_fine, d.cognome as cognome, (select sum(ore) from u3kon_gg_days_of_tasks as dot where dot.id_task=task.id) as ore,
+        $query->select('task.*,task.id as task_id, task.data_fine as data_fine, d.cognome as cognome, (select sum(ore) from u3kon_gg_days_of_tasks as dot where dot.id_task=task.id) as ore,
                 p.descrizione as descrizione_piano, task.ore*task.valore_orario as task_budget, f.descrizione as descrizione_fase, 
                 v.descrizione as descrizione_voce_costo, task.id_voce_costo as id_voce_costo, task.id_ruolo as id_ruolo, task.id_dipendente as id_dipendente, task.id_task_propedeutico as id_task_propedeutico');
         $query->from('u3kon_gg_task as task');
@@ -191,7 +168,8 @@ class ggpmModelTask  extends JModelLegacy {
             $query->where('task.id_piano_formativo=' . $id_piano_formativo);
         if ($id_dipendente!=null)
            $query->where('task.id_dipendente='.$id_dipendente);
-        $query->order('task.data_inizio ASC');
+        $query->order('task.data_inizio ASC,task.id ASC ');
+        //$query->order('task.id ASC');
         //echo $query; die;
         $this->_db->setQuery($query);
 
@@ -200,8 +178,12 @@ class ggpmModelTask  extends JModelLegacy {
 
             $data_minore = min(array_column($task, 'data_inizio'));
             $data_maggiore = max(array_column($task, 'data_fine'));
-            $data_maggiore=date_add(date_create($data_maggiore),date_interval_create_from_date_string("30 days"));
-            $daysoftasks = $this->createDaysoftasks($task, $data_minore, $data_maggiore);
+            //$data_maggiore=date_add(date_create($data_maggiore),date_interval_create_from_date_string("30 days"));
+            $daysoftasks =[];
+            if ($list_only==false)
+                $daysoftasks = $this->createDaysoftasks($task, $data_minore, $data_maggiore);
+
+
 
             return [$task, $data_minore, $data_maggiore, $daysoftasks];
         }else{
@@ -215,7 +197,7 @@ class ggpmModelTask  extends JModelLegacy {
         $anno_inizio=date_create($data_inizio)->format('Y');
         $mese_inizio=date_create($data_inizio)->format('m');
         $data_inizio=date_create($anno_inizio.'-'.$mese_inizio.'-01');
-
+        $data_fine=date_create($data_fine);
 
 
         $colori=['#ff9900','#00cc00','#9999ff'];
@@ -245,7 +227,7 @@ class ggpmModelTask  extends JModelLegacy {
             while($data_corrente<=$data_fine){
 
                 $nuova= clone date_add($data_corrente,date_interval_create_from_date_string("1 day"));
-                // var_dump($item['data_inizio']);var_dump($nuova);
+                //var_dump($item['data_inizio']);var_dump($nuova);
                 if(date_create($item['data_inizio'])<=$nuova && date_create($item['data_fine'])>=$nuova) {
 
                     $rowtask[$giorno_progetto][1]=$this->getOreFromDaysOftasks($item['id'],$data_corrente, $item['id_dipendente']);
@@ -261,8 +243,8 @@ class ggpmModelTask  extends JModelLegacy {
             }
             array_push($taskrows,$rowtask);
         }
-
-        return $taskrows;
+//var_dump($taskrows[0]);die;
+        return $taskrows[0];
     }
 
     private function getOreFromDaysOfTasks($id_task,$data_giorno, $id_dipendente){

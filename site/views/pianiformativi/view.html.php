@@ -57,11 +57,12 @@ class ggpmViewPianiformativi extends JViewLegacy {
             $this->data_fine_piano_formativo=$piano_formativo['data_fine'];
 
             $taskModel=new ggpmModelTask();
-            $this->task=$taskModel->getTask(null,$this->id_piano_formativo_attivo,null);
+            $this->task=$taskModel->getTask(null,$this->id_piano_formativo_attivo,null,true);
             $data_inizio=date_create($this->task[1]);
             $data_fine=$this->task[2];
             $controller=new ggpmControllerPianiformativi();
             $this->calendario_piano_formativo=$controller->createCalendario($data_inizio,$data_fine);
+            $this->date_piano_formativo=[];
             $this->cruscottodipendentipiano=$dipendentiModel->getCruscottodipendenti($this->id_piano_formativo_attivo);
         }
 

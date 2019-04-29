@@ -353,12 +353,12 @@ defined('_JEXEC') or die;
 
                     <?php //RIGA DEI MESI
                     $dimensioni_pixel_giorno=20;
-                    $totale_giorni_progetto=0;
+                    $totale_giorni_progetto=count($this->calendario_piano_formativo[1]);
                     if($this->calendario_piano_formativo) {
                         foreach ($this->calendario_piano_formativo[0] as $mese) {
-                            $giorni_mese = $this->mesi[intval(date_format($mese, 'm'))][1];
-                            $nome_mese = $this->mesi[intval(date_format($mese, 'm'))][0];
-                            $totale_giorni_progetto = $totale_giorni_progetto + $giorni_mese; ?>
+                            $giorni_mese = $this->mesi[$mese][1];
+                            $nome_mese = $this->mesi[$mese][0];
+                            ?>
                             <th style="width: <?php echo $giorni_mese * $dimensioni_pixel_giorno; ?>px;"><?php echo $nome_mese; ?></th>
                         <?php }
                     }?>
@@ -366,45 +366,57 @@ defined('_JEXEC') or die;
                     <?php //RIGA DEI GIORNI
                     if($this->calendario_piano_formativo) {
                         $index=0;
-                        foreach ($this->calendario_piano_formativo[0] as $mese_) {
 
-                            $giorni_mese = $this->mesi[intval(date_format($mese_, 'm'))][1];
-                            for ($giorno = 1; $giorno < $giorni_mese+1 ; $giorno++) {
+                        foreach ($this->calendario_piano_formativo[0] as $mese) {
+
+                            $giorni_mese = $this->mesi[$mese][1];
+                            for ($giorno = 1; $giorno <= $giorni_mese ; $giorno++) {
                                 if(isset($this->calendario_piano_formativo[1][$index]['f'])) {
                                        $festivo_feriale = ($this->calendario_piano_formativo[1][$index]['f'] == 1 ? "festivo" : "feriale");
                                 }else{
                                     $festivo_feriale =null;
                                 }
                                 echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px;" class="'.$festivo_feriale.'">' . $giorno . '</td>';
+                                //array_push($this->date_piano_formativo,$mese_.'/'.$giorno);
                             $index++;
+                            if($index==$totale_giorni_progetto)
+                                break;
                             }
                         }
                     }?>
                 </tr>
 
                 </thead>
-                <tbody>
+                <tbody id="righetask">
                 <?php //RIGHE DEI TASK
                 if(isset($this->task[3]))
-                    $dayoftasks=$this->task[3];
+                //$dayoftasks=$this->task[3];
                 $tasknumber=0;
                 if(isset($this->task[0])) {
                     foreach ($this->task[0] as $item) {
 
-                        echo '<tr class="d-flex">';
+                        echo '<tr class="d-flex" id='.$item['task_id'].'>';
+//echo $totale_giorni_progetto;die;
+                        for ($i = 0; $i < $totale_giorni_progetto; $i++) {
+                            //if (isset($dayoftasks[$tasknumber][$i])) {
+                                //$colore_del_giorno = $dayoftasks[$tasknumber][$i][0];
+                                //$ore_del_giorno=$dayoftasks[$tasknumber][$i][1];
 
-                        for ($i = 1; $i < $totale_giorni_progetto+1; $i++) {
-                            if (isset($dayoftasks[$tasknumber][$i])) {
-                                $colore_del_giorno = $dayoftasks[$tasknumber][$i][0];
-                                $ore_del_giorno=$dayoftasks[$tasknumber][$i][1];
-                                $giorno=$dayoftasks[$tasknumber][$i][2];
-                            } else {
-                                $colore_del_giorno = 'none';
-                                $ore_del_giorno=null;
+                                //$giorno=$this->calendario_piano_formativo[0][$i];
+                            //} else {
+                                //$colore_del_giorno = 'none';
+                                //$ore_del_giorno=null;
+
                                 //$giorno=$dayoftasks[$tasknumber][$i][2];
+                            //}
+                            if(isset($this->calendario_piano_formativo[1][$i])) {
+                                $giorno = date_format($this->calendario_piano_formativo[1][$i]['data'], 'Y-m-d');
+                            }else{
+                                $giorno=null;
                             }
-                            echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px; height: 20px; background-color:' . $colore_del_giorno . '">
-                                    <input class="input_ore_giorno" giorno="'.$giorno.'" task_id='.$item['id'].' size="1" style="background-color:' . $colore_del_giorno . '" type=text ore=' . $ore_del_giorno . ' value=' . $ore_del_giorno . '>
+                            //$giorno='ciao';
+                            echo '<td style="width: ' . $dimensioni_pixel_giorno . 'px; height: 20px;">
+                                    <input class="input_ore_giorno" giorno="'.$giorno.'" task_id="'.$item['id'].'" size="1"  type=text ore="" value="">
                                    </td>';
                         }
                         echo '</tr>';
@@ -466,6 +478,37 @@ defined('_JEXEC') or die;
 
     // console.log(ruoli_dipendenti.filter(x => x.ruolo === 'progettista'));
     var piano_formativo_attivo=<?php if(isset($this->id_piano_formativo_attivo)){ echo $this->id_piano_formativo_attivo; } else { echo "null";}?>
+
+
+    jQuery(document).ready(function(){
+        jQuery("#righetask").children('tr').each(function(){
+           //console.log('task: ',jQuery(this).attr("id").toString());
+           var taskid=jQuery(this).attr("id").toString();
+            jQuery.ajax({
+                method: "POST",
+                cache: false,
+                url: 'index.php?option=com_ggpm&task=task.gettask&id='+taskid+'&list_only=false'
+
+            }).done(function(data) {
+                //console.log('dati da task: ',(JSON.parse(data)));
+                var data_=JSON.parse(data);
+                var dataofday=data_[3];
+
+
+                jQuery.each(dataofday, function(index,value) {
+
+
+                    console.log('daydata',value);
+
+                    var input_cell=jQuery("input[giorno='"+value[2]+"'][task_id="+taskid+"]");
+                    input_cell.attr("value",value[1]);
+                    input_cell.attr("ore",value[1]);
+                    input_cell.css("background-color",value[0]);
+                });
+            });
+        });
+
+    });
 
 
     jQuery("#piano_formativo").change(function(event){
