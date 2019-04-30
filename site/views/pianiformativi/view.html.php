@@ -69,7 +69,7 @@ class ggpmViewPianiformativi extends JViewLegacy {
         if($this->id_task_to_modify!=null){
 
             $taskModel=new ggpmModelTask();
-            $this->task_to_modify=$taskModel->getTask($this->id_task_to_modify,null,null)[0][0];
+            $this->task_to_modify=$taskModel->getTask($this->id_task_to_modify,null,null,null)[0][0];
             //var_dump($this->task_to_modify);die;
 
         }

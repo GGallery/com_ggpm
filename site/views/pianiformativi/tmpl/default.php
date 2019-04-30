@@ -228,7 +228,8 @@ defined('_JEXEC') or die;
                     </tr>
                     <tr class="d-flex">
                         <td class="col-4">
-                            <span id="task_data_fine_calcolata">data fine calcolata</span>
+                            <?php if(isset($this->task_to_modify)){echo $this->task_to_modify['data_fine'];}else{echo '<span id="task_data_fine_calcolata">data fine calcolata</span>';}?>
+
                         </td>
 
                         <td class="col-4">ore
@@ -459,7 +460,8 @@ defined('_JEXEC') or die;
 
 
 
-    var current_data_fine;
+    var current_data_fine<?php if(isset($this->task_to_modify)){echo '=\''.$this->task_to_modify['data_fine'].'\'';}?>;
+    console.log('current data fine',current_data_fine);
     var ruoli_dipendenti=[];
 
     ruoli_dipendenti=[
@@ -508,7 +510,7 @@ defined('_JEXEC') or die;
             });
         });
 
-    });
+   });
 
 
     jQuery("#piano_formativo").change(function(event){
